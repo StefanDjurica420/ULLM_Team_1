@@ -8,7 +8,7 @@ Does explanation-aware filtering reduce downstream gender bias more effectively 
 
 ## Dataset and task
 
-We plan to use Bias in Bios, which is also used in the first paper. The downstream task will be occupation classification from biographies, and we will compare how well the model identifies each occupation for men and women.
+We plan to use Bias in Bios, which is also used in the paper Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks. The downstream task will be occupation classification from biographies, and we will compare how well the model identifies each occupation for men and women.
 
 We may restrict the experiment to a subset of occupations.
 
