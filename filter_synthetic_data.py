@@ -92,7 +92,6 @@ def run_scorer(prompt):
 
     The implementation still needs to be decided:
     - load or access a local model,
-    - call a locally running model server,
     - or call an external API.
     """
 
