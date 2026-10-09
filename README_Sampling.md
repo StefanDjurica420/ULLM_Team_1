@@ -1,8 +1,11 @@
-# Bias in Bios — Proportional Sampling
+# Bias in Bios — Sampling
 
-This script creates smaller samples of the [LabHC/bias_in_bios dataset](https://huggingface.co/datasets/LabHC/bias_in_bios), preserving the profession × gender proportions within each original split as closely as integer rounding allows.
+This script creates smaller samples of the [LabHC/bias_in_bios dataset](https://huggingface.co/datasets/LabHC/bias_in_bios) for 8 professions: surgeon, physician, nurse, software engineer, architect, attorney, psychologist, and teacher.
 
-Sampling is performed without replacement, independently within the original `train`, `dev`, and `test` splits. The script does not balance genders or professions and does not move records between splits.
+- **Train (O):** 1,500 bios per profession, keeping each profession's original gender ratio as closely as integer rounding allows.
+- **Dev and test:** gender-balanced within each profession (100 and 250 per gender per profession).
+
+Sampling is performed without replacement, independently within the original `train`, `dev`, and `test` splits. The script does not move records between splits.
 
 ## Requirements
 
@@ -69,20 +72,25 @@ Edit the constants at the top of `sample_bias_in_bios.py`:
 
 ```python
 SEED = 42
-SIZES = {"train": 12_000, "dev": 2_000, "test": 6_000}
+# ("natural", n): n bios per profession, keeping that profession's gender ratio.
+# ("balanced", n): n bios per gender per profession.
+SIZES = {"train": ("natural", 1_500), "dev": ("balanced", 100), "test": ("balanced", 250)}
+KEEP = ["surgeon", "physician", "nurse", "software_engineer",
+        "architect", "attorney", "psychologist", "teacher"]
 OUTPUT = Path("bias_in_bios_sample")
 ```
 
-| Split | Default sample size |
-| --- | ---: |
-| Train | 12,000 |
-| Dev | 2,000 |
-| Test | 6,000 |
-| **Total** | **20,000** |
+| Split | Mode | Per profession | Total |
+| --- | --- | ---: | ---: |
+| Train | natural gender ratio | 1,500 | 12,000 |
+| Dev | gender-balanced | 100 + 100 | 1,600 |
+| Test | gender-balanced | 250 + 250 | 4,000 |
 
-Each size must be positive and no larger than its source split. A fixed seed makes sampling reproducible for unchanged input data, row order, code, and dependency versions. The script uses seeds 42, 43, and 44 for train, dev, and test respectively with the default configuration.
+The balanced sizes are limited by the rarest group: the official dev and test splits contain only 110 and 273 female software engineers. If a size cannot be met, the script stops and lists the groups that are too small.
 
-Each profession × gender group receives its proportional quota using largest-remainder allocation. The split total is exact; each group's allocation differs from its ideal proportional count by less than one row. Very small groups may receive no rows.
+A fixed seed makes sampling reproducible for unchanged input data, row order, code, and dependency versions. The script uses seeds 42, 43, and 44 for train, dev, and test respectively with the default configuration.
+
+In natural mode, each profession's gender split uses largest-remainder allocation: the profession total is exact, and each gender's count differs from its ideal proportional count by less than one row.
 
 ## Output
 
@@ -96,7 +104,7 @@ Files are written to `bias_in_bios_sample/`, relative to the directory from whic
 | `train_distribution.csv` | Original and sampled training distributions |
 | `dev_distribution.csv` | Original and sampled development distributions |
 | `test_distribution.csv` | Original and sampled test distributions |
-| `combined_distribution.csv` | Original and sampled distributions across all splits |
+| `O_train_ids.txt` | `source_row` of every train sample, one per line (input for the generation pipeline) |
 
 Sample files retain the dataset columns (`hard_text`, `profession`, and `gender`) and add:
 
@@ -105,8 +113,6 @@ Sample files retain the dataset columns (`hard_text`, `profession`, and `gender`
 - `profession_name`: the occupation name mapped from its numerical label.
 
 The dataset uses `gender = 0` for men and `gender = 1` for women. Distribution reports include counts, totals, the percentage of women, and the men-to-women count ratio. CSV files use UTF-8 with a byte order mark (`utf-8-sig`).
-
-The script flags test occupations with fewer than 50 sampled records for either gender. These groups remain in the output. The flag warns that estimated TPR gaps may be noisy; 50 records is not a guarantee of reliable estimates.
 
 ## Git ignore rules
 

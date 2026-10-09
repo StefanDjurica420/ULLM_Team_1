@@ -74,3 +74,8 @@ This tests whether any benefit depends on the explanation being associated with 
 The intended contribution is a controlled empirical study of whether generator explanations provide useful information for fairness-oriented synthetic data selection and whether that information translates into improved downstream behavior.
 
 We do not assume that explanation-aware filtering will outperform the alternatives. A negative result could suggest that generator explanations are uninformative or misleading for this purpose under the tested conditions. The novelty of the specific comparison must be established against prior work on bias mitigation through data filtering and explanation-based data selection.
+
+## Repository guide
+
+- [README_Sampling.md](README_Sampling.md): sampling the Bias in Bios train/dev/test splits.
+- [README_Generation.md](README_Generation.md): the synthetic data generation pipeline (setup, API keys, commands, outputs, pilot results).

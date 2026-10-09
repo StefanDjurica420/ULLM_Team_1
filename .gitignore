@@ -11,3 +11,8 @@ bias_in_bios_sample/
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# Pipeline outputs and secrets
+data/
+.env
+.pytest_cache/

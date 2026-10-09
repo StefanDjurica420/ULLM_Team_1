@@ -1,0 +1,6 @@
+datasets
+pandas
+numpy
+openai>=1.40
+pyyaml
+pytest
