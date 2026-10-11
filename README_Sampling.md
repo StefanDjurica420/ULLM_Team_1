@@ -22,7 +22,7 @@ References:
 | dev | 1,600 | 40 | 862 | 738 |
 | test | 4,000 | 100 | 2,156 | 1,844 |
 
-Sizes match the supplied old script. Unlike the old script, this version uses all 28 professions and does not balance genders within dev/test professions. The target male count is `floor(size * 0.539 + 0.5)`, so dev is 53.875% male. For each profession the minimum is `ceil(size * 0.025 * (1 + floor(original_share / 0.05)))` in each split. Original shares are calculated from exact source counts, not rounded displayed percentages. To use 12k/2k/6k instead, edit `SIZES`; feasibility will be checked again.
+This version uses all 28 professions and does not balance genders within dev/test professions. The target male count is `floor(size * 0.539 + 0.5)`, so dev is 53.875% male. For each profession the minimum is `ceil(size * 0.025 * (1 + floor(original_share / 0.05)))` in each split. Original shares are calculated from exact source counts, not rounded displayed percentages. To use 12k/2k/6k instead, edit `SIZES`; feasibility will be checked again.
 
 ## Allocation method
 
@@ -92,38 +92,3 @@ Gender labels are 0 for men and 1 for women. CSVs use `utf-8-sig`. Sampling pres
 ## Validation on the official Parquet files
 
 The revised script was run successfully against all three official LabHC splits (257,478 train; 39,642 dev; 99,069 test). All requested totals, gender targets, profession minima, within-profession rounding constraints, and source-row uniqueness checks passed. Failure checks also confirmed rejection of impossible quotas, and fixed-seed record selection was verified.
-
-
-The verified allocation under the stepped rule is shown below. Solver versions may select a different equally optimal allocation.
-
-| Profession | Train | Dev | Test |
-| --- | ---: | ---: | ---: |
-| accountant | 300 | 40 | 100 |
-| architect | 300 | 40 | 102 |
-| attorney | 600 | 80 | 200 |
-| chiropractor | 300 | 40 | 100 |
-| comedian | 300 | 40 | 100 |
-| composer | 300 | 40 | 100 |
-| dentist | 300 | 40 | 147 |
-| dietitian | 300 | 40 | 100 |
-| dj | 300 | 40 | 100 |
-| filmmaker | 300 | 40 | 100 |
-| interior_designer | 300 | 40 | 100 |
-| journalist | 600 | 80 | 201 |
-| model | 300 | 40 | 100 |
-| nurse | 549 | 75 | 191 |
-| painter | 300 | 40 | 100 |
-| paralegal | 300 | 40 | 100 |
-| pastor | 300 | 40 | 100 |
-| personal_trainer | 300 | 40 | 100 |
-| photographer | 601 | 80 | 200 |
-| physician | 900 | 152 | 300 |
-| poet | 300 | 40 | 100 |
-| professor | 2150 | 240 | 604 |
-| psychologist | 300 | 40 | 100 |
-| rapper | 300 | 40 | 100 |
-| software_engineer | 300 | 40 | 100 |
-| surgeon | 300 | 53 | 115 |
-| teacher | 300 | 40 | 140 |
-| yoga_teacher | 300 | 40 | 100 |
-| TOTAL | 12000 | 1600 | 4000 |
