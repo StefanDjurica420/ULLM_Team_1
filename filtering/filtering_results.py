@@ -1,7 +1,7 @@
 """Filtering scored biographies and saving resulting datasets."""
 
 from pathlib import Path
-from filtering_scoring import custom_id_for, parse_score
+from .filtering_scoring import custom_id_for, parse_score
 
 
 def merge_scores(df, scores, scoring_mode, id_column):

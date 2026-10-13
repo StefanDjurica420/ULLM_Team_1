@@ -5,7 +5,7 @@ def custom_id_for(scoring_mode, bio_id):
 
 
 def build_prompt(row, scoring_mode, columns):
-    """Build the scorer prompt for one biography."""
+    """Builds the scorer prompt for one biography."""
     # TODO: Refine prompt using literature.
     prompt = f"""
     Evaluate the following synthetic biography for gender bias.

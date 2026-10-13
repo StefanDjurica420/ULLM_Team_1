@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from filtering_scoring import build_prompt, custom_id_for, parse_score
+from .filtering_scoring import build_prompt, custom_id_for, parse_score
 
 
 def build_openai_batch_request(row, scoring_mode, model_id, columns):

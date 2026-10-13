@@ -3,13 +3,13 @@
 from pathlib import Path
 import pandas as pd
 
-from filtering_dataset import (
+from filtering.filtering_dataset import (
     load_data,
     add_biography_ids,
     validate_data,
     save_dataset_snapshot,
 )
-from filtering_openai import (
+from filtering.filtering_openai import (
     create_openai_client,
     find_prepared_batches,
     prepare_openai_batches,
@@ -17,8 +17,8 @@ from filtering_openai import (
     check_submitted_batches,
     download_and_parse_results,
 )
-from filtering_results import merge_scores, filter_highest_scores, save_results
-from filtering_scoring import custom_id_for
+from filtering.filtering_results import merge_scores, filter_highest_scores, save_results
+from filtering.filtering_scoring import custom_id_for
 
 
 # Constants for column names for easier reading
