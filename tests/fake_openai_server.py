@@ -1,7 +1,7 @@
 """Tiny local OpenAI-compatible chat completions server for testing the live path.
 
-Every 4th request gets a 429 and every 11th a 500, so retries are exercised. Responses come from
-the mock model.
+Every 4th request gets a 429 and every 11th a 500, so retries are exercised. A wrong API key gets
+a 401. Replies come from respond(body) -> text if given, otherwise from the generation mock.
 """
 from __future__ import annotations
 
@@ -14,8 +14,10 @@ from gen.mock import mock_response
 
 
 class FakeOpenAIServer(ThreadingHTTPServer):
-    def __init__(self):
+    def __init__(self, respond=None, api_key="test-key"):
         super().__init__(("127.0.0.1", 0), Handler)
+        self.respond = respond
+        self.api_key = api_key
         self.lock = threading.Lock()
         self.n_requests = 0
         self.status_counts = {}
@@ -54,17 +56,26 @@ class Handler(BaseHTTPRequestHandler):
             self.server.n_requests += 1
             n = self.server.n_requests
             self.server.bodies.append(body)
+        if self.headers.get("Authorization") != f"Bearer {self.server.api_key}":
+            return self.send(401, {"error": {"message": "Incorrect API key", "type": "auth"}})
         if n % 4 == 0:
             return self.send(429, {"error": {"message": "Rate limit reached", "type": "requests"}})
         if n % 11 == 0:
             return self.send(500, {"error": {"message": "Internal error", "type": "server_error"}})
 
-        prompt = body["messages"][0]["content"]
-        gender = re.search(r"biography of a (male|female) ", prompt)
-        profession = re.search(r"working as an? (.+?)\.\n", prompt)
-        result = mock_response({"seed": body.get("seed", 0), "prompt": prompt,
-                                "target_gender": gender.group(1) if gender else None,
-                                "profession": profession.group(1).replace(" ", "_")})
+        prompt = body["messages"][-1]["content"]
+        if self.server.respond:
+            raw = self.server.respond(body)
+            result = {"raw": raw, "finish_reason": "stop",
+                      "usage": {"prompt_tokens": len(prompt) // 4,
+                                "completion_tokens": len(raw) // 4}}
+        else:
+            gender = re.search(r"biography of a (male|female) ", prompt)
+            profession = re.search(r"working as an? (.+?)\.\n", prompt)
+            result = mock_response({"seed": body.get("seed", 0), "prompt": prompt,
+                                    "target_gender": gender.group(1) if gender else None,
+                                    "profession": (profession.group(1).replace(" ", "_")
+                                                   if profession else "unknown")})
         self.send(200, {
             "id": f"chatcmpl-{n}", "object": "chat.completion", "created": 0,
             "model": body["model"],

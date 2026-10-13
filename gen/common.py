@@ -12,6 +12,9 @@ from pathlib import Path
 
 import yaml
 
+# JSONL helpers live in the shared llm_api package; re-exported here for the gen modules.
+from llm_api.jsonl import JsonlAppender, read_jsonl, write_jsonl  # noqa: F401
+
 
 def _prof(id_, display, plural, article, title_terms, workplace):
     return {"id": id_, "display": display, "plural": plural, "article": article,
@@ -112,64 +115,6 @@ def setup_stdout():
 
 
 # ---------------------------------------------------------------- files
-
-def read_jsonl(path):
-    path = Path(path)
-    if not path.exists():
-        return []
-    with open(path, encoding="utf-8") as f:
-        lines = f.read().split("\n")
-    rows = []
-    for i, line in enumerate(lines):
-        if not line.strip():
-            continue
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            if i == len(lines) - 1:  # half-written last line from an interrupted run
-                print(f"warning: ignoring incomplete last line of {path}", file=sys.stderr)
-                continue
-            raise ValueError(f"{path}:{i + 1}: invalid JSON line") from None
-    return rows
-
-
-class JsonlAppender:
-    """Appends one JSON object per line and flushes, so an interrupted run loses at most one line."""
-
-    def __init__(self, path):
-        path = Path(path)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        if path.exists() and path.stat().st_size:
-            with open(path, "rb+") as f:
-                f.seek(-1, os.SEEK_END)
-                if f.read(1) != b"\n":  # drop a half-written last line before appending
-                    f.seek(0)
-                    f.truncate(f.read().rfind(b"\n") + 1)
-        self.f = open(path, "a", encoding="utf-8")
-
-    def write(self, row):
-        self.f.write(json.dumps(row, ensure_ascii=False) + "\n")
-        self.f.flush()
-
-    def close(self):
-        self.f.close()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *exc):
-        self.close()
-
-
-def write_jsonl(path, rows):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
-    os.replace(tmp, path)
-
 
 def write_json(path, obj):
     path = Path(path)

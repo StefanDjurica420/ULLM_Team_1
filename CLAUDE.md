@@ -265,7 +265,10 @@ gen/common.py      config loading, JSONL read/append (tolerate a half-written la
                    seeds via sha256 (not Python hash()), PROFESSIONS table, pronoun detection
 gen/prepare_refs.py  reference bios
 gen/plan.py        render all prompts up front -> plan.jsonl; --topup
-gen/generate.py    live OpenAI-compatible calls (+ mock backend)
+gen/generate.py    live calls via llm_api (+ mock backend)
+llm_api/           shared API layer for generation AND filtering: ModelConfig/MODELS presets, LLMClient
+                   (retries), MockClient, run_requests/run_prompts (concurrent, resumable JSONL),
+                   parse_json(_fields), jsonl helpers, usage.py cost report. Documented in llm_api/README.md
 gen/validate.py    parse + checks
 gen/select_pool.py final pool
 gen/inspect_sample.py  readable sample for the pilot review

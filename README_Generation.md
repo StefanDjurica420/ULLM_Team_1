@@ -217,7 +217,7 @@ Failed bios are never deleted. They stay in `validated.jsonl`, marked with the c
 - **Interrupting is safe.** Every answer is saved the moment it arrives. Rerunning `generate` skips calls that are already done.
 - **Rate limits and server errors** are retried automatically with increasing waits. Calls that still fail go to the errors file and are retried on the next run.
 - **Everything is seeded.** The same config gives the same prompts and example bios. The model outputs themselves vary slightly between runs.
-- **Cost:** a call is about 430 input and 190 output tokens. The whole pilot (both prompt types, both models, 672 calls) cost under $0.10. The full run (about 18k calls per model) costs roughly $0.35 for Llama and $3.20 for GPT-4o-mini, with prompt type 1. Types 0/4 need several times more calls (see below).
+- **Cost:** a call is about 430 input and 190 output tokens. The whole pilot (both prompt types, both models, 672 calls) cost $0.065. Check spending any time with `python -m llm_api.usage "data/runs/*/raw_*.jsonl"`. The full run (about 18k calls per model) costs roughly $0.35 for Llama and $3.20 for GPT-4o-mini, with prompt type 1. Types 0/4 need several times more calls (see below).
 - **Speed:** with the default concurrency, Llama does about 2 calls per second and GPT-4o-mini about 6.
 - **Llama variant:** DeepInfra only serves the 8-bit quantized "Turbo" version of Llama 3.1-8B, so the configs name it explicitly.
 

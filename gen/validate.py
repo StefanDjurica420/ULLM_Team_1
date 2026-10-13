@@ -7,9 +7,9 @@ deterministic.
 from __future__ import annotations
 
 import argparse
-import json
-import re
 from collections import Counter, defaultdict
+
+from llm_api import parse_json_fields
 
 from .common import (cell_targets, detect_gender, has_title, load_config, load_refs, read_jsonl,
                      run_path, setup_stdout, tokens, word_count, write_json, write_jsonl)
@@ -20,26 +20,7 @@ CHECKS = ("json_ok", "not_truncated", "bio_nonempty", "explanation_ok", "no_titl
 
 def parse_output(raw):
     """Return the {"bio", "explanation"} dict from a model response, or None."""
-    if not raw:
-        return None
-    text = raw.strip()
-    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.S)
-    if fenced:
-        text = fenced.group(1)
-    try:
-        obj = json.loads(text)
-    except json.JSONDecodeError:
-        start, end = text.find("{"), text.rfind("}")
-        if start < 0 or end <= start:
-            return None
-        try:
-            obj = json.loads(text[start:end + 1])
-        except json.JSONDecodeError:
-            return None
-    if not isinstance(obj, dict) or not isinstance(obj.get("bio"), str) \
-            or not isinstance(obj.get("explanation"), str):
-        return None
-    return obj
+    return parse_json_fields(raw, {"bio": str, "explanation": str})
 
 
 def shingles(text, n):

@@ -79,3 +79,4 @@ We do not assume that explanation-aware filtering will outperform the alternativ
 
 - [README_Sampling.md](README_Sampling.md): sampling the Bias in Bios train/dev/test splits.
 - [README_Generation.md](README_Generation.md): the synthetic data generation pipeline (setup, API keys, commands, outputs, pilot results).
+- [llm_api/README.md](llm_api/README.md): shared code for calling Llama and GPT-4o-mini (used by generation, reusable for filtering), API key sharing, usage and cost.
