@@ -211,3 +211,30 @@ def test_live_path_with_rate_limits(tmp_path, monkeypatch):
     assert body["response_format"] == {"type": "json_object"}
     assert isinstance(body["seed"], int) and body["temperature"] == 0.9
     assert sum(r["passed"] for r in read_jsonl(out / "validated.jsonl")) > 0
+
+
+def test_total_counts_follow_refs_and_all_professions(tmp_path):
+    from gen.common import ALL_PROFESSIONS
+
+    config = make_config(tmp_path)
+    cfg_dict = yaml.safe_load(open(config, encoding="utf-8"))
+    cfg_dict["professions"] = "all"
+    cfg_dict["counts"] = {"total": 1000, "overgen": 1.2}
+    open(config, "w", encoding="utf-8").write(yaml.safe_dump(cfg_dict))
+    cfg = load_config(config)
+    assert cfg["professions"] == ALL_PROFESSIONS and len(ALL_PROFESSIONS) == 28
+    refs = ([{"profession": "nurse", "gender": "female"}] * 9 + [{"profession": "nurse", "gender": "male"}]
+            + [{"profession": p, "gender": "male"} for p in ALL_PROFESSIONS if p != "nurse"] * 3)
+    targets = cell_targets(cfg, refs)
+    assert sum(targets.values()) == 1000
+    n_refs = len(refs)
+    for (p, g), n in targets.items():  # every cell within one bio of its exact share of O
+        exact = 1000 * sum(r["profession"] == p and r["gender"] == g for r in refs) / n_refs
+        assert abs(n - exact) < 1
+    assert targets[("surgeon", "female")] == 0
+
+
+def test_counts_needs_total_or_per_profession(tmp_path):
+    config = make_config(tmp_path, counts={"total": 100})  # mock.yaml also has per_profession
+    with pytest.raises(SystemExit, match="exactly one of"):
+        load_config(config)

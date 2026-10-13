@@ -33,12 +33,9 @@ Each API call asks the model for **one bio plus a 2–3 sentence explanation**, 
 
 ### Design decisions already made
 
-- **8 professions:** surgeon, physician, nurse, software engineer, architect, attorney, psychologist, teacher. This mixes male- and female-dominated jobs, and each has enough minority-gender bios in the official test split.
-- **Splits** (made by `sample_bias_in_bios.py`, see `README_Sampling.md`):
-  - **O (train):** 1,500 bios per profession, keeping each profession's natural gender ratio.
-  - **dev:** 100 men + 100 women per profession.
-  - **test:** 250 men + 250 women per profession.
-- **Synthetic pool:** about 30k bios, 1,876 per profession per generator. Within each profession, the male/female split follows O's ratio (e.g. surgeon 1,598 M / 278 F). The synthetic data therefore never changes gender representation; only the content of the bios differs.
+- **All 28 Bias in Bios professions.**
+- **Splits** (made by `sample_bias_in_bios.py`, see `README_Sampling.md`): train (O) 12,000, dev 1,600, test 4,000. Each keeps every profession's natural gender ratio (53.9% men overall), and every profession has at least 300 bios in O.
+- **Synthetic pool:** about 30k bios, 15,008 per generator. They are split over all profession × gender combinations in the same proportions as O (e.g. per generator: nurse 63 men / 625 women, surgeon 320 / 55, professor 1,476 / 1,213). The synthetic data therefore never changes profession sizes or gender representation; only the content of the bios differs.
 - **Two generators,** each producing half the pool, so we can compare the models and control for a filter preferring its own model's text.
 
 ### Prompt types
@@ -166,12 +163,13 @@ The two `generate` commands can run at the same time in two terminals (each need
 | `configs/mock.yaml` | Fake model, no keys needed. For trying out the pipeline. Make fake refs with `python -m gen.prepare_refs --config configs/mock.yaml --source fake --n-per-profession 40` |
 | `configs/pilot.yaml` | Pilot, type 1, 3 professions, 40 bios per profession per generator, 50/50 gender |
 | `configs/pilot_contrastive.yaml` | The same pilot with type 4 |
-| `configs/full.yaml` | Full run: 8 professions, 1,876 per profession per generator, O's gender ratio |
+| `configs/full.yaml` | Full run: all 28 professions, 15,008 per generator, distributed exactly like O |
 
 The settings you are most likely to change:
 
 - **`prompt`:** the prompt type, template file, and length range in words.
-- **`counts.per_profession`:** bios to keep per profession per generator.
+- **`counts.total`** *or* **`counts.per_profession`** (one of the two): `total` = bios to keep per generator, split over profession × gender in the same proportions as O (the full run); `per_profession` = the same number for every profession (the pilots).
+- **`professions`:** a list, or `all` for the 28.
 - **`counts.gender_ratio`:** `balanced` (50/50) or `refs` (same ratio as the reference bios, i.e. O).
 - **`counts.overgen`:** how many extra calls to make up front (1.2 = 20% extra; use about 1.6 for types 0/4).
 - **`validate`:** limits for the checks.

@@ -110,17 +110,17 @@ Bias in Bios ──sample──► O (train) / dev / test
 - The HF features are plain `int64`, **not ClassLabel**, so names can't be read from the dataset.
   Mapping (from the dataset card, used in `sample_bias_in_bios.py`): professions in alphabetical
   order 0 accountant … 28; `gender` 0 = male, 1 = female (checked: nurse is 91% `1`).
-- **[DECIDED] 8 professions** (female share in the official data, identical across splits):
-  surgeon 14.8% · software_engineer 15.8% · architect 23.7% · attorney 38.3% · physician 49.4% ·
-  teacher 60.2% · psychologist 62.1% · nurse 90.8%. Chosen over the earlier candidates paralegal
-  and dietitian, which have only 67 / 71 male bios in the official test split. The smallest
-  minority group is female software engineers (273 in official test, 110 in official dev).
+- **[DECIDED 2026-10-13] All 28 professions** (replaces the earlier 8-profession plan). The
+  sampling script on `main` (constrained MILP sampling, see `README_Sampling.md`) is the source
+  of truth; it needs `scipy>=1.9`.
 - **[DECIDED] Splits**, made by `sample_bias_in_bios.py` (seeds 42/43/44), each from its own
-  official split:
-  - **O (train): 1,500 per profession = 12,000**, natural gender ratio per profession.
+  official split, all with each profession's natural gender ratio and 53.9% men overall:
+  - **O (train): 12,000**; every profession ≥ 300 (2.5% minimum, more for big ones: professor
+    2,150, physician 900, attorney/journalist/photographer 600, nurse 550).
     Row ids in `bias_in_bios_sample/O_train_ids.txt`. Identical in every training condition.
-  - **dev: 100 M + 100 F per profession = 1,600**; **test: 250 M + 250 F per profession = 4,000**.
-    (The earlier 2k/6k proposal can't be gender-balanced: too few female software engineers.)
+  - **dev: 1,600** (≥ 40 per profession); **test: 4,000** (≥ 100 per profession). **Not**
+    gender-balanced, so some test cells are tiny (e.g. female rappers, male dietitians ≈ 10):
+    TPR gaps there will be noisy; the analysis should say so or aggregate.
 - Synthetic data is never put in dev or test.
 
 ## 4. Generation
@@ -140,13 +140,13 @@ only means changing `base_url`, `model`, `provider`, and `api_key_env` in the co
 Note: GPT-4o-mini is not the same as `o4-mini` (a different model, retired from the API on
 2026-10-23). As of 2026-10-09 GPT-4o-mini has no announced shutdown date.
 
-### Pool size — [DECIDED: ~30k total, natural gender ratio]
-- **1,876 per profession per generator** (equal across professions, like O) → 2 × 8 × 1,876 =
-  30,016 records. Within each profession the M/F split **follows O's gender ratio** (largest
-  remainder), so synthetic data never changes gender representation; only content differs.
-  Per generator (computed by `cell_targets` from `data/refs_O.jsonl`): surgeon 1,598 M / 278 F ·
-  physician 949 / 927 · nurse 171 / 1,705 · software_engineer 1,580 / 296 · architect 1,432 / 444 ·
-  attorney 1,158 / 718 · psychologist 712 / 1,164 · teacher 747 / 1,129.
+### Pool size — [DECIDED: ~30k total, distributed exactly like O]
+- **15,008 per generator** (`counts.total` in `full.yaml`) → 30,016 records, split over all
+  56 profession × gender cells **in proportion to O** (largest remainder), so the pool has O's
+  profession sizes and gender ratios; synthetic data changes neither, only content differs.
+  Per generator e.g. professor 1,476 M / 1,213 F · nurse 63 / 625 · surgeon 320 / 55; smallest
+  cells: male dietitian 26, female rapper 36, female DJ 52 (computed by `cell_targets` from
+  `data/refs_O.jsonl`).
 - Over-generate ~15–20% per (generator, profession, gender) cell, validate, then randomly take
   exactly the target number per cell from records that pass. ≈ 36k calls total.
 - Every record stores which generator produced it.
@@ -258,7 +258,7 @@ files, marked with which checks failed.
 ```
 configs/pilot.yaml               pilot, prompt type 1, 3 professions, 40 per profession split 50/50
 configs/pilot_contrastive.yaml   same pilot with prompt type 4
-configs/full.yaml                full run: 8 professions, 1,876 per profession at O's gender ratio, both generators live
+configs/full.yaml                full run: all 28 professions, 15,008 per generator split like O, both generators live
 configs/mock.yaml                both generators on the mock backend, for testing without keys
 prompts/gen_type{0,1,4}_v1.txt   generation prompts (§4)
 gen/common.py      config loading, JSONL read/append (tolerate a half-written last line), stable
@@ -317,20 +317,19 @@ validate:
   max_shingle_overlap: 0.3     # fail if >30% of a bio's 8-grams already occur in refs or accepted bios
   opening_share_warn: 0.05     # warn if one 4-word opening covers >5% of a generator's bios
 ```
-`full.yaml`: run_name `full_v1`, `refs_file: data/refs_O.jsonl`, all 8 professions, `per_profession: 1876`,
+`full.yaml`: run_name `full_v1`, `refs_file: data/refs_O.jsonl`, `professions: all` (28),
+`counts: {total: 15008}` (exactly one of `total` / `per_profession`),
 llama `concurrency: 32`, gpt4omini live (`openai_compat`). Raise `overgen` (~1.6) for prompt
 types 0/4, where the model picks the gender and cells come out uneven.
 
 ### PROFESSIONS table (`gen/common.py`)
 Per profession: display text, `title_terms` (banned whole words, case-insensitive), `workplace`
 (for the contrastive prompt). Fail loudly if a config uses a profession missing from the table.
-Also the Bias in Bios int id (for converting to training data). The 8 used:
-- surgeon: [surgeon(s)], hospital · physician: [physician(s)], medical practice · nurse: [nurse(s)], hospital
-- software_engineer: [software engineer(s), software developer(s)], tech company
-- architect: [architect(s)], architecture firm · attorney: [attorney(s), lawyer(s)], law firm
-- psychologist: [psychologist(s)], counseling practice · teacher: [teacher(s)], school
-- Spares if the list changes: paralegal / law firm, dietitian / nutrition clinic, journalist /
-  newsroom, professor / university, dentist / dental clinic, painter / studio
+Also the Bias in Bios int id (for converting to training data). All 28 are in the table, keyed by
+the same names as `sample_bias_in_bios.py` (`ALL_PROFESSIONS`, id order). Watch-outs: "model" is
+also an ordinary word ("role model"), so `no_title` may over-reject model bios; DJ's display text
+is "DJ"; title terms for two-word jobs (software engineer, personal trainer, yoga teacher,
+interior designer) are matched as phrases.
 
 ### Step specs
 **prepare_refs** — `--source official_train --n-per-profession 300` (pilot) or `--ids-file

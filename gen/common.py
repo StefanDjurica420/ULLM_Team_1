@@ -25,32 +25,57 @@ def _prof(id_, display, plural, article, title_terms, workplace):
 # columns (no ClassLabel names), so the ids come from the dataset card. title_terms are banned
 # whole words in generated bios (case-insensitive).
 PROFESSIONS = {
-    "surgeon": _prof(25, "surgeon", "surgeons", "a", ["surgeon", "surgeons"], "hospital"),
-    "physician": _prof(19, "physician", "physicians", "a", ["physician", "physicians"],
-                       "medical practice"),
-    "nurse": _prof(13, "nurse", "nurses", "a", ["nurse", "nurses"], "hospital"),
-    "software_engineer": _prof(24, "software engineer", "software engineers", "a",
-                               ["software engineer", "software engineers",
-                                "software developer", "software developers"], "tech company"),
+    "accountant": _prof(0, "accountant", "accountants", "an", ["accountant", "accountants"],
+                        "accounting firm"),
     "architect": _prof(1, "architect", "architects", "an", ["architect", "architects"],
                        "architecture firm"),
     "attorney": _prof(2, "attorney", "attorneys", "an",
                       ["attorney", "attorneys", "lawyer", "lawyers"], "law firm"),
-    "psychologist": _prof(22, "psychologist", "psychologists", "a",
-                          ["psychologist", "psychologists"], "counseling practice"),
-    "teacher": _prof(26, "teacher", "teachers", "a", ["teacher", "teachers"], "school"),
-    # Spares, in case the profession list changes.
-    "paralegal": _prof(15, "paralegal", "paralegals", "a", ["paralegal", "paralegals"], "law firm"),
+    "chiropractor": _prof(3, "chiropractor", "chiropractors", "a",
+                          ["chiropractor", "chiropractors"], "chiropractic clinic"),
+    "comedian": _prof(4, "comedian", "comedians", "a",
+                      ["comedian", "comedians", "comedienne", "comediennes"], "comedy club"),
+    "composer": _prof(5, "composer", "composers", "a", ["composer", "composers"], "music studio"),
+    "dentist": _prof(6, "dentist", "dentists", "a", ["dentist", "dentists"], "dental clinic"),
     "dietitian": _prof(7, "dietitian", "dietitians", "a",
                        ["dietitian", "dietitians", "dietician", "dieticians",
                         "nutritionist", "nutritionists"], "nutrition clinic"),
+    "dj": _prof(8, "DJ", "DJs", "a", ["dj", "djs", "disc jockey", "disc jockeys"], "nightclub"),
+    "filmmaker": _prof(9, "filmmaker", "filmmakers", "a",
+                       ["filmmaker", "filmmakers", "film maker", "film makers"], "film studio"),
+    "interior_designer": _prof(10, "interior designer", "interior designers", "an",
+                               ["interior designer", "interior designers"], "design studio"),
     "journalist": _prof(11, "journalist", "journalists", "a",
                         ["journalist", "journalists", "reporter", "reporters"], "newsroom"),
+    # "model" is also an ordinary word ("role model"), so this check may reject some valid bios.
+    "model": _prof(12, "model", "models", "a", ["model", "models", "supermodel", "supermodels"],
+                   "modeling agency"),
+    "nurse": _prof(13, "nurse", "nurses", "a", ["nurse", "nurses"], "hospital"),
+    "painter": _prof(14, "painter", "painters", "a", ["painter", "painters"], "studio"),
+    "paralegal": _prof(15, "paralegal", "paralegals", "a", ["paralegal", "paralegals"], "law firm"),
+    "pastor": _prof(16, "pastor", "pastors", "a", ["pastor", "pastors"], "church"),
+    "personal_trainer": _prof(17, "personal trainer", "personal trainers", "a",
+                              ["personal trainer", "personal trainers"], "gym"),
+    "photographer": _prof(18, "photographer", "photographers", "a",
+                          ["photographer", "photographers"], "photography studio"),
+    "physician": _prof(19, "physician", "physicians", "a", ["physician", "physicians"],
+                       "medical practice"),
+    "poet": _prof(20, "poet", "poets", "a", ["poet", "poets"], "writers' workshop"),
     "professor": _prof(21, "professor", "professors", "a", ["professor", "professors"],
                        "university"),
-    "dentist": _prof(6, "dentist", "dentists", "a", ["dentist", "dentists"], "dental clinic"),
-    "painter": _prof(14, "painter", "painters", "a", ["painter", "painters"], "studio"),
+    "psychologist": _prof(22, "psychologist", "psychologists", "a",
+                          ["psychologist", "psychologists"], "counseling practice"),
+    "rapper": _prof(23, "rapper", "rappers", "a", ["rapper", "rappers"], "record label"),
+    "software_engineer": _prof(24, "software engineer", "software engineers", "a",
+                               ["software engineer", "software engineers",
+                                "software developer", "software developers"], "tech company"),
+    "surgeon": _prof(25, "surgeon", "surgeons", "a", ["surgeon", "surgeons"], "hospital"),
+    "teacher": _prof(26, "teacher", "teachers", "a", ["teacher", "teachers"], "school"),
+    "yoga_teacher": _prof(27, "yoga teacher", "yoga teachers", "a",
+                          ["yoga teacher", "yoga teachers", "yoga instructor", "yoga instructors"],
+                          "yoga studio"),
 }
+ALL_PROFESSIONS = list(PROFESSIONS)  # all 28, in Bias in Bios id order
 
 # Bias in Bios gender ints: 0 = male, 1 = female.
 GENDERS = {
@@ -76,6 +101,8 @@ def load_config(path):
     missing = [k for k in required if k not in cfg]
     if missing:
         raise SystemExit(f"{path}: missing config keys {missing}")
+    if cfg["professions"] == "all":
+        cfg["professions"] = list(ALL_PROFESSIONS)
     unknown = [p for p in cfg["professions"] if p not in PROFESSIONS]
     if unknown:
         raise SystemExit(f"Unknown professions {unknown}; add them to PROFESSIONS in gen/common.py")
@@ -84,6 +111,9 @@ def load_config(path):
     if cfg["prompt"]["type"] not in PROMPT_TYPES:
         raise SystemExit(f"prompt.type must be one of {PROMPT_TYPES}")
     cfg["counts"] = {**COUNTS_DEFAULTS, **cfg["counts"]}
+    if ("total" in cfg["counts"]) == ("per_profession" in cfg["counts"]):
+        raise SystemExit("counts needs exactly one of: total (split over all profession x gender "
+                         "cells like the refs file, i.e. O) or per_profession")
     if cfg["counts"]["gender_ratio"] not in ("balanced", "refs"):
         raise SystemExit("counts.gender_ratio must be 'balanced' or 'refs'")
     cfg["validate"] = {**VALIDATE_DEFAULTS, **(cfg.get("validate") or {})}
@@ -160,18 +190,31 @@ def load_refs(cfg):
 
 
 def cell_targets(cfg, refs):
-    """Records to keep per (profession, gender) for each generator."""
-    n = cfg["counts"]["per_profession"]
+    """Records to keep per (profession, gender) for each generator.
+
+    counts.total: split over all (profession, gender) cells in proportion to the refs file
+    (= O in the full run), so the pool has O's profession sizes and gender ratios.
+    counts.per_profession: the same number for every profession, split M/F by gender_ratio.
+    """
+    counts = cfg["counts"]
+    if "total" in counts:
+        weights = {(p, g): sum(r["profession"] == p and r["gender"] == g for r in refs)
+                   for p in cfg["professions"] for g in cfg["genders"]}
+        missing = [p for p in cfg["professions"]
+                   if not any(weights[(p, g)] for g in cfg["genders"])]
+        if missing:
+            raise SystemExit(f"No reference bios for {missing} in {cfg['refs_file']}")
+        return largest_remainder(weights, counts["total"])
     targets = {}
     for prof in cfg["professions"]:
-        if cfg["counts"]["gender_ratio"] == "balanced":
+        if counts["gender_ratio"] == "balanced":
             weights = {g: 1 for g in cfg["genders"]}
         else:
             weights = {g: sum(r["profession"] == prof and r["gender"] == g for r in refs)
                        for g in cfg["genders"]}
             if not sum(weights.values()):
                 raise SystemExit(f"No reference bios for {prof} in {cfg['refs_file']}")
-        for g, k in largest_remainder(weights, n).items():
+        for g, k in largest_remainder(weights, counts["per_profession"]).items():
             targets[(prof, g)] = k
     return targets
 

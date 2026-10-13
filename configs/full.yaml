@@ -1,14 +1,12 @@
-# Full run. Prompt type is still OPEN (decide after the pilot); per_profession and gender ratio are DECIDED.
+# Full run: all 28 professions, pool split like O (profession sizes and gender ratios). Prompt type still OPEN.
 run_name: full_v1
 seed: 42
 output_dir: data/runs/full_v1
 refs_file: data/refs_O.jsonl            # gen.prepare_refs --ids-file bias_in_bios_sample/O_train_ids.txt
-professions: [surgeon, physician, nurse, software_engineer, architect, attorney, psychologist, teacher]
+professions: all                        # the 28 Bias in Bios professions
 genders: [male, female]
 prompt: {type: 1, template: prompts/gen_type1_v1.txt, version: v1, n_refs: 3, min_words: 70, max_words: 130}
-# Kept per (generator, profession), split M/F by gender_ratio: balanced (50/50, so the pilot has
-# enough minority-gender bios to read) or refs (the refs file's ratio; = O's ratio in full.yaml).
-counts: {per_profession: 1876, gender_ratio: refs, overgen: 1.2}   # raise overgen to ~1.6 for types 0/4
+counts: {total: 15008, overgen: 1.2}      # per generator, split over profession x gender cells like O; raise overgen to ~1.6 for types 0/4
 sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 500}
 generators:
   llama:

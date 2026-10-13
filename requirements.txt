@@ -1,5 +1,6 @@
 datasets
 pandas
+scipy>=1.9
 numpy
 openai>=1.40
 pyyaml
