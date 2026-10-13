@@ -45,7 +45,7 @@ GPT_MODELS = {"gpt_4o_mini": "gpt-4o-mini"}
 RUN_MODE = "filter"  # "prepare", "submit", "check", "download", "filter"
 DRY_RUN = False  # Applies to submit only. Set to False to actually send a paid api request.
 
-REMOVE_FRACTION = 0.20  # Fraction of highest scored biographies to remove
+NUMBER_TO_REMOVE = 2000 # Number of highest scored biographies to remove
 MAX_REQUESTS_PER_BATCH = 1000  # Number of biographies per batch input file
 
 # Paths
@@ -129,9 +129,8 @@ def main():
         if not scores_path.exists():
             raise FileNotFoundError(f"No validated scores: {scores_path}. Run download first.")
         scores = pd.read_csv(scores_path, dtype={"custom_id": "string"})
-        scored = merge_scores(df, scores, SCORE_MODE, ID_COLUMN)
-        n_remove = int(len(scored) * REMOVE_FRACTION)  # Round down.
-        kept, removed = filter_highest_scores(scored, n_remove)
+        scored = merge_scores(df, scores, SCORE_MODE, ID_COLUMN) # merge the scores with the original data based on the custom IDs
+        kept, removed = filter_highest_scores(scored, NUMBER_TO_REMOVE)
         result_dir = OUTPUT_DIR / EXPERIMENT_ID / "results" / MODEL_NAME / SCORE_MODE
         save_results(scored, kept, removed, result_dir)
         print(f"Kept {len(kept)} biographies; removed {len(removed)}. Saved in {result_dir}")
