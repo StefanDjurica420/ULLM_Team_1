@@ -1,3 +1,8 @@
 pandas==3.0.6
 openai==3.26.1
 python-dotenv==1.2.4
+datasets
+scipy>=1.9
+numpy
+pyyaml
+pytest

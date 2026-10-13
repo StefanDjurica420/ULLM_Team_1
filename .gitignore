@@ -15,3 +15,6 @@ __pycache__/
 
 # Filtering experiments
 filtering_outputs/
+# Pipeline outputs and secrets
+data/
+.pytest_cache/

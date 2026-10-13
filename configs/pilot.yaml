@@ -1,0 +1,40 @@
+# Pilot: prompt type 1 (gender given), 3 professions, live calls to both generators.
+run_name: pilot_t1
+seed: 42
+output_dir: data/runs/pilot_t1
+refs_file: data/refs_pilot.jsonl
+professions: [surgeon, nurse, software_engineer]
+genders: [male, female]
+prompt: {type: 1, template: prompts/gen_type1_v1.txt, version: v1, n_refs: 3, min_words: 70, max_words: 130}
+# Kept per (generator, profession), split M/F by gender_ratio: balanced (50/50, so the pilot has
+# enough minority-gender bios to read) or refs (the refs file's ratio; = O's ratio in full.yaml).
+counts: {per_profession: 40, gender_ratio: balanced, overgen: 1.2}
+sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 500}
+generators:
+  llama:
+    backend: openai_compat              # openai_compat | openai_batch | mock
+    provider: deepinfra
+    base_url: https://api.deepinfra.com/v1/openai
+    api_key_env: DEEPINFRA_API_KEY
+    model: meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo   # DeepInfra only serves the FP8 Turbo variant (checked 2026-10-09)
+    concurrency: 16
+    retries: 5
+    send_seed: true                     # set false if the provider rejects `seed`
+    json_mode: true                     # response_format json_object
+  gpt4omini:
+    backend: openai_compat
+    provider: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    model: gpt-4o-mini-2024-07-18
+    concurrency: 16
+    retries: 5
+    send_seed: true
+    json_mode: true
+validate:
+  min_words: 50
+  max_words: 180
+  min_explanation_words: 8
+  shingle_n: 8                 # word n-grams for near-duplicate detection
+  max_shingle_overlap: 0.3     # fail if >30% of a bio's 8-grams already occur in refs or accepted bios
+  opening_share_warn: 0.05     # warn if one 4-word opening covers >5% of a generator's passed bios

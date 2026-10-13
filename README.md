@@ -108,3 +108,8 @@ Change `RUN_MODE` in `filter_synthetic_data.py`, then run `python filter_synthet
 Files are saved under `filtering_outputs/<experiment>/`. The `batch_inputs/` folder contains requests, `batch_jobs/` contains submission IDs, `batch_results/` contains raw responses and scores, and `results/<model>/<mode>/` contains the final CSVs. This output folder is ignored by Git.
 
 The number removed is `int(number_of_biographies * REMOVE_FRACTION)`, rounded down. If scores are tied, the original row order decides which biographies are removed. Existing batch inputs and final score files are not overwritten.
+## Repository guide
+
+- [README_Sampling.md](README_Sampling.md): sampling the Bias in Bios train/dev/test splits.
+- [README_Generation.md](README_Generation.md): the synthetic data generation pipeline (setup, API keys, commands, outputs, pilot results).
+- [llm_api/README.md](llm_api/README.md): shared code for calling Llama and GPT-4o-mini (used by generation, reusable for filtering), API key sharing, usage and cost.
