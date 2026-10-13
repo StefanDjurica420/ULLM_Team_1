@@ -1,149 +1,263 @@
-# Calling Llama and GPT-4o-mini from Python
+# llm_api
 
-This folder contains the code we use to talk to our two language models:
+Python helpers for sending prompts to our two language models and saving their answers:
 
-- **Llama 3.1-8B**, which runs on DeepInfra;
-- **GPT-4o-mini**, which runs on OpenAI.
+| Name in code | Model | Provider | Key needed |
+|---|---|---|---|
+| `"llama"` | Llama 3.1-8B Instruct (`meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo`) | DeepInfra | `DEEPINFRA_API_KEY` |
+| `"gpt4omini"` | GPT-4o-mini (`gpt-4o-mini-2024-07-18`) | OpenAI | `OPENAI_API_KEY` |
 
-The synthetic data generation already uses this code; it made all 672 calls of the pilot without a single failure. The filtering step needs the same thing, so you don't have to write your own API code: just import this.
+The synthetic data generation uses this package, and the filtering step can use it in the same way. You give it a list of prompts; it sends them to the model and saves every answer to a file. Along the way it:
 
-In short: **you give it a list of prompts, it sends them to the model and saves every answer to a file.** It deals with the annoying parts for you:
+- sends many prompts at once, so thousands of prompts take minutes rather than hours;
+- waits and retries automatically when the provider is busy or has a temporary error;
+- saves each answer as soon as it arrives, so an interrupted run can simply be restarted;
+- reports how many tokens were used and what they cost.
 
-- It sends many prompts at the same time, so thousands of prompts take minutes, not hours.
-- If the provider says "too many requests" or has a hiccup, it waits and tries again.
-- Every answer is saved the moment it arrives. If your laptop crashes halfway, run the script again and it continues where it stopped.
-- It can tell you how much your runs cost.
+It does not know anything about bios or filtering. You write the prompts and decide what to do with the answers.
 
-It knows nothing about bios or filtering. You write the prompts and decide what to do with the answers.
+**Contents**
+1. [Setup](#1-setup)
+2. [API key or token](#2-api-key-or-token)
+3. [Quick start](#3-quick-start)
+4. [Reading the results](#4-reading-the-results)
+5. [Method reference](#5-method-reference)
+6. [Settings](#6-settings)
+7. [When something goes wrong](#7-when-something-goes-wrong)
+8. [Costs](#8-costs)
+9. [Managing access tokens](#9-managing-access-tokens)
 
 ---
 
-## Step 1: Set up (once)
+## 1. Setup
 
-Open a terminal in the project folder, activate the project's Python environment (see `README_Generation.md`), and install the requirements:
+Do this once, in PowerShell, from the project folder:
 
-```bash
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-To check that everything works (this needs no API key and costs nothing):
+In Git Bash, activate with `source .venv/Scripts/activate` instead.
 
-```bash
+To check the installation (no key needed, nothing is sent anywhere):
+
+```powershell
 python -m pytest tests/test_llm_api.py
 ```
 
-Always run your own scripts from the project folder, otherwise Python won't find `llm_api`.
+Always run your scripts from the project folder with the environment activated, otherwise Python cannot find `llm_api`.
 
-## Step 2: Set your API key
+## 2. API key or token
 
-The code reads your key from an *environment variable*: a setting that lives in your terminal session, not in a file. Set it every time you open a new terminal.
+The code reads the key from an **environment variable**, never from a file. This keeps keys out of code and out of git. You only need the variable for the model you use.
 
-Git Bash:
-```bash
-export OPENAI_API_KEY="sk-..."
-export DEEPINFRA_API_KEY="..."
-```
+**Llama:** you receive a DeepInfra token (a long string that starts with `jwt:`). Save it once in PowerShell:
 
-PowerShell:
 ```powershell
-$env:OPENAI_API_KEY = "sk-..."
-$env:DEEPINFRA_API_KEY = "..."
+setx DEEPINFRA_API_KEY "jwt:..."
 ```
 
-**Never put a key in your code, in a config file, or in a chat.** See [API keys](#api-keys-who-gets-what) at the bottom for how to get your own.
+**GPT-4o-mini** (only if you use it):
 
-## Step 3: Try it without spending money
+```powershell
+setx OPENAI_API_KEY "sk-..."
+```
 
-Before using the real models, try everything with a fake one. You write a small function that pretends to be the model:
+`setx` stores the value permanently for your Windows user, but only **new** windows see it. Close PowerShell, open a new one, and activate the environment again.
+
+To set a key for the current window only, use `$env:DEEPINFRA_API_KEY = "..."` (PowerShell) or `export DEEPINFRA_API_KEY="..."` (Git Bash).
+
+### Test it
+
+This sends one tiny prompt to Llama and costs a fraction of a cent:
+
+```powershell
+python -c "from llm_api import run_prompts; print(run_prompts([{'id': 't1', 'prompt': 'Reply with JSON: {\"ok\": true}'}], 'llama', 'data/filtering/token_test.jsonl'))"
+```
+
+If the output shows `'ok': 1`, everything works. If not, see [section 7](#7-when-something-goes-wrong).
+
+### Keeping keys safe
+
+- Never put a key or token in code, a config file, a commit, a screenshot or a chat.
+- If one is exposed anyway, report it so it can be switched off and replaced.
+
+## 3. Quick start
+
+### Try it for free first
+
+Pass `mock=` with a function that pretends to be the model. Nothing is sent and nothing is charged, but the output file looks exactly like a real one. This lets you build and test all your code first.
 
 ```python
 from llm_api import run_prompts
 
 def fake_model(request):
-    return '{"score": 3, "keep": true}'     # always gives the same answer
+    return '{"score": 3, "keep": true}'
 
 prompts = [
-    {"id": "bio_1", "prompt": "Rate this bio as JSON: She treats patients at a clinic."},
-    {"id": "bio_2", "prompt": "Rate this bio as JSON: He writes backend code."},
+    {"id": "bio_1", "prompt": "Rate this bio. Answer in JSON: She treats patients at a clinic."},
+    {"id": "bio_2", "prompt": "Rate this bio. Answer in JSON: He writes backend code."},
 ]
 
 run_prompts(prompts, "llama", "data/filtering/test.jsonl", mock=fake_model)
 ```
 
-The output file looks exactly like a real run's, so you can build and test your whole filtering and analysis code first, and only switch to the real model at the end by removing `mock=fake_model`.
+### A real run
 
-## Step 4: Run a real filter
-
-Here is a full example: a content-only filter with GPT-4o-mini over the synthetic pool.
+Example: a filter that judges every bio in the synthetic pool with Llama.
 
 ```python
 from string import Template
 from llm_api import read_jsonl, run_prompts
 
-# 1. Load the synthetic bios.
-pool = read_jsonl("data/runs/full_v1/pool.jsonl")
+pool = read_jsonl("data/runs/full_v1/pool.jsonl")       # the synthetic bios
 
-# 2. Load your prompt from a file. It contains $profession and $bio where the values go.
+# Prompt stored in a file, with $profession and $bio where the values go.
 template = Template(open("prompts/filter_content_only_v1.txt", encoding="utf-8").read())
 
-# 3. Make one request per bio. Use the bio's own id, so you can match answers to bios later.
 requests = [
-    {"id": bio["id"],
+    {"id": bio["id"],                                    # reuse the bio's id
      "prompt": template.substitute(profession=bio["profession"], bio=bio["bio"])}
     for bio in pool
 ]
 
-# 4. Send them. Start with limit=5 to check that the answers look right.
-run_prompts(requests, "gpt4omini", "data/filtering/content_only_gpt4omini.jsonl",
-            tag={"filter": "content_only"}, limit=5)
+out = "data/filtering/content_only_llama.jsonl"
+run_prompts(requests, "llama", out, limit=5)             # first 5 only: check the answers
+run_prompts(requests, "llama", out)                      # then the rest (the 5 are skipped)
 ```
 
-When the first 5 answers look good, run the same code again without `limit=5`. It skips the 5 that are already done and sends the rest.
+Good to know:
+- **Each request needs a unique `id`.** Use the bio's own id, so answers can be matched back to bios.
+- **The prompt must ask for JSON.** The API is set to return JSON, and the provider rejects prompts that don't mention it.
+- **Use `string.Template` (`$name`) for prompt files, not `.format()` or f-strings.** Prompts contain curly braces for the JSON example, which break `.format()`.
+- **Use a separate output file for each filter and model**, e.g. `content_only_llama.jsonl` and `explanation_aware_llama.jsonl`.
+- **Running the same command again is safe.** Requests that already have an answer are skipped.
 
-A few things to know:
+## 4. Reading the results
 
-- **Which model:** write `"gpt4omini"` or `"llama"`. These are the exact same models that generated the bios, which matters for the comparison in the paper.
-- **The prompt must mention JSON** (e.g. "Answer in JSON: {"score": ..., "keep": ...}"). We ask the API for JSON output, and OpenAI refuses requests whose prompt doesn't say "JSON".
-- **Why `Template` and not an f-string or `.format()`:** your prompt will contain curly braces for the JSON example, and those confuse `.format()`. `Template` uses `$name` instead, so braces are fine.
-- **One output file per filter and model**, e.g. `content_only_llama.jsonl`, `explanation_aware_gpt4omini.jsonl`. For the explanation-aware filter, also put `bio["explanation"]` into the prompt.
-- **`tag`** is optional. Whatever you put in it is copied into every line of the output file, which is handy for knowing what produced a file.
-
-## Step 5: Read the answers
-
-Each line of the output file is one answer:
+The output file has one line per answer:
 
 ```json
-{"id": "full_v1_llama_nurse_female_00417", "filter": "content_only",
- "raw": "{\"score\": 4, \"keep\": true}", "finish_reason": "stop",
- "model_returned": "gpt-4o-mini-2024-07-18",
- "usage": {"prompt_tokens": 312, "completion_tokens": 14}, "ts": "2026-10-13T10:00:00+00:00"}
+{"id": "full_v1_llama_nurse_female_00417",
+ "raw": "{\"score\": 4, \"keep\": true}",
+ "finish_reason": "stop",
+ "model_returned": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+ "usage": {"prompt_tokens": 312, "completion_tokens": 14},
+ "ts": "2026-10-13T10:00:00+00:00"}
 ```
 
-`raw` is the model's reply, exactly as received. To turn it into usable values:
+| Field | Meaning |
+|---|---|
+| `id` | The id from your request |
+| `raw` | The model's reply, exactly as received |
+| `finish_reason` | `"stop"` = finished normally; `"length"` = cut off by `max_tokens` |
+| `model_returned` | The model that actually answered (report this one) |
+| `usage` | Tokens sent and received, used for the cost report |
+| `ts` | Time of the answer (UTC) |
+| *(your `tag` fields)* | Anything passed as `tag=` is added to every line |
+
+To turn the replies into values:
 
 ```python
 from llm_api import read_jsonl, parse_json_fields
 
-for row in read_jsonl("data/filtering/content_only_gpt4omini.jsonl"):
+for row in read_jsonl("data/filtering/content_only_llama.jsonl"):
     verdict = parse_json_fields(row["raw"], {"score": int, "keep": bool})
     if verdict is None:
-        print("unusable answer for", row["id"])     # the model didn't follow the format
+        print("unusable answer:", row["id"])
     else:
         print(row["id"], verdict["score"], verdict["keep"])
 ```
 
-`parse_json_fields` also copes with replies like "Sure! Here you go: {...}" or JSON inside a code block, and returns `None` when the answer is unusable. Because the raw reply is kept, you can change how you parse it later without paying for new API calls.
+Because the raw reply is kept, you can change how you parse it later without new API calls.
 
-## If something goes wrong
+## 5. Method reference
 
-- **"Too many requests", timeouts, or server errors:** these are handled for you. It waits a moment (1, 2, 4 seconds, and so on) and tries again, up to 5 times.
-- **A prompt still fails after that:** it is written to a separate errors file next to your output (e.g. `errors_content_only_gpt4omini.jsonl`), and the other prompts keep going. Run the script again later to retry only the failed ones.
-- **Missing or wrong API key, or a model the provider doesn't know:** everything stops immediately with a `FatalError` that says what's wrong, so you don't get thousands of failed requests. (A typo in the short name, like `"lama"`, gives an error listing the valid names.)
-- **The script stops halfway** (crash, Ctrl+C, laptop goes to sleep): nothing is lost. Run it again and it continues.
+Everything below is imported with `from llm_api import ...`, except the cost report, which is in `llm_api.usage`.
 
-## Changing settings
+### Sending prompts
 
-The defaults suit filtering, so you usually don't need to change anything. If you do, use `get_model`:
+**`run_prompts(requests, model, out_path, *, errors_path=None, limit=None, tag=None, mock=None)`**
+Sends all requests and appends the answers to `out_path`. This is the method to use in normal scripts.
+- `requests`: list of dicts, each with a unique `"id"` and either a `"prompt"` (text) or `"messages"` (chat format, see [System prompt](#system-prompt)). An optional `"seed"` (int) makes answers more reproducible.
+- `model`: `"llama"`, `"gpt4omini"`, or a configuration from `get_model(...)`.
+- `out_path`: the JSONL file for the answers. Folders are created if needed.
+- `errors_path`: where failed requests are logged. Default: `errors_<output file name>` in the same folder.
+- `limit`: send at most this many new requests (useful for a first test).
+- `tag`: dict of extra fields copied into every output line, e.g. `{"filter": "content_only"}`.
+- `mock`: function `request -> reply text`. Uses a fake model instead of the API.
+- Returns a dict: `requested`, `ok`, `failed`, `prompt_tokens`, `completion_tokens`, `seconds`.
+- Does not work inside Jupyter; use `run_requests` there.
+
+**`run_requests(requests, client, out_path, *, errors_path=None, concurrency=8, limit=None, tag=None, label="llm")`**
+The async version of `run_prompts`, for Jupyter notebooks or your own async code. You pass a client instead of a model name:
+
+```python
+from llm_api import LLMClient, get_model, run_requests
+
+async with LLMClient(get_model("llama")) as client:
+    stats = await run_requests(requests, client, "data/filtering/out.jsonl", concurrency=16)
+```
+
+### Models and clients
+
+**`get_model(name, **changes)`**
+Returns the settings for `"llama"` or `"gpt4omini"`, optionally with some values changed, e.g. `get_model("llama", max_tokens=100)`. See [section 6](#6-settings) for all settings. `MODELS` holds the two unchanged presets.
+
+**`ModelConfig`**
+The settings object that `get_model` returns. You normally don't create one yourself.
+
+**`LLMClient(config, api_key=None)`**
+Connection to one model, with automatic retries. Reads the key from the environment variable unless `api_key` is given. Use it with `async with`:
+- `await client.complete(prompt, seed=None)`: sends one prompt and returns `{"raw", "finish_reason", "model_returned", "usage"}`.
+- `await client.complete(messages=[...])`: the same, with a chat-format message list.
+
+```python
+async with LLMClient(get_model("llama")) as client:
+    result = await client.complete("Answer in JSON: is the sky blue?")
+```
+
+**`MockClient(respond)`**
+A fake client for testing. `respond(request)` returns the reply text. It can be used wherever an `LLMClient` is expected; `run_prompts(..., mock=...)` uses it for you.
+
+**`FatalError`**
+Raised when the whole run must stop: a missing or invalid key, or a model the provider doesn't recognise.
+
+**`CallFailed`**
+A single request that failed for good. You don't normally see it, because the runner writes it to the errors file and continues.
+
+### Parsing replies
+
+**`parse_json(raw)`**
+Returns the JSON object in a reply as a dict, or `None`. It also handles replies wrapped in a code block or surrounded by text ("Sure! Here it is: {...}").
+
+**`parse_json_fields(raw, fields)`**
+Like `parse_json`, but also checks that each field exists and has the right type, e.g. `{"score": int, "keep": bool}`. Returns `None` if anything is missing or wrong.
+
+### Files
+
+**`read_jsonl(path)`**
+Reads a JSONL file (one JSON object per line) into a list of dicts. Returns `[]` if the file doesn't exist. A half-written last line, left by an interrupted run, is skipped with a warning.
+
+**`write_jsonl(path, rows)`**
+Writes a list of dicts to a JSONL file in one go. It writes to a temporary file first, so a crash never leaves a half-written file.
+
+**`JsonlAppender(path)`**
+Adds lines to a JSONL file one at a time, saving each immediately. Use it with `with JsonlAppender(path) as out: out.write(row)`.
+
+### Costs
+
+**`python -m llm_api.usage <files...>`**
+Prints calls, tokens and estimated cost per model for the given output files (wildcards allowed). See [section 8](#8-costs).
+
+**`usage_summary(paths)`** (from `llm_api.usage`)
+The same numbers as a dict, for use in your own code.
+
+## 6. Settings
+
+The defaults are chosen for judging/filtering, so usually nothing needs changing. To change settings, create a configuration with `get_model` and pass it instead of the name:
 
 ```python
 from llm_api import get_model, run_prompts
@@ -152,82 +266,107 @@ llama = get_model("llama", max_tokens=100, concurrency=16)
 run_prompts(requests, llama, "data/filtering/content_only_llama.jsonl")
 ```
 
-The settings you might care about:
+| Setting | Default | What it does |
+|---|---|---|
+| `temperature` | 0.0 | Randomness of the answers. 0 gives the most consistent judgements |
+| `top_p` | 1.0 | Another randomness setting; leave as is |
+| `max_tokens` | 500 | Maximum answer length. A short verdict needs far fewer, and lowering this saves a little money |
+| `json_mode` | True | Asks the provider for JSON output |
+| `send_seed` | True | Sends the request's `"seed"`, if it has one, for more reproducible answers |
+| `concurrency` | 8 | How many requests are in flight at once. 16–32 works well |
+| `retries` | 5 | How often a busy or failed request is retried |
+| `timeout` | 60 | Seconds to wait for one answer |
+| `backoff_base` | 1.0 | First wait between retries in seconds; it doubles each time |
 
-- **`temperature`** (default 0): how random the answers are. 0 gives the most consistent judgements. Generation used 0.9 because we wanted varied bios.
-- **`max_tokens`** (default 500): the maximum answer length. A short verdict needs much less, and lowering it saves a little money.
-- **`concurrency`** (default 8): how many prompts are sent at the same time. 16–32 worked fine in the pilot.
+### System prompt
 
-Others, rarely needed:
-- `top_p` (1.0): another randomness setting.
-- `json_mode` (on): asks for JSON output.
-- `send_seed` (on): if your request has a `"seed"`, it is sent for more reproducible answers.
-- `retries` (5): how often to retry.
-- `timeout` (60 seconds): how long to wait for one answer.
-
-**System prompt:** to give the model a separate instruction ("You are a strict reviewer"), use `messages` instead of `prompt` in a request:
-
-```python
-{"id": "bio_1", "messages": [
-    {"role": "system", "content": "You are a strict reviewer. Answer in JSON."},
-    {"role": "user", "content": "Rate this bio: ..."}]}
-```
-
-## Using a Jupyter notebook
-
-`run_prompts` doesn't work inside Jupyter: you'll get an error about an "event loop". In a notebook, use this version instead (note the `await`):
+To give the model a separate instruction, use `"messages"` instead of `"prompt"`:
 
 ```python
-from llm_api import LLMClient, get_model, run_requests
-
-async with LLMClient(get_model("llama")) as client:
-    await run_requests(requests, client, "data/filtering/out.jsonl", concurrency=16)
+{"id": "bio_1",
+ "messages": [{"role": "system", "content": "You are a strict reviewer. Answer in JSON."},
+              {"role": "user", "content": "Rate this bio: ..."}]}
 ```
 
-## How much did it cost?
+## 7. When something goes wrong
 
-```bash
+| What you see | What it means / what to do |
+|---|---|
+| `Set the DEEPINFRA_API_KEY environment variable` | The key isn't set in this window. After `setx`, open a **new** PowerShell window |
+| `FatalError ... AuthenticationError` | The key or token is wrong or incomplete. A token starts with `jwt:`; copy the whole string |
+| `FatalError ... PermissionDenied` or `NotFound` | The key or token doesn't allow this model, or the model name is wrong |
+| Every request suddenly fails (`errors_<file>.jsonl` fills up) | Read the error message in that file. Mentions of payment, quota or limits usually mean the token has expired or reached its spending limit; a new token is needed |
+| `ModuleNotFoundError: llm_api` | Run your script from the project folder, with the environment activated |
+| Error mentioning an "event loop" | You're in Jupyter: use `run_requests` with `await` |
+| A few lines in `errors_<file>.jsonl` | Those requests failed even after retrying. Run the same command again to retry only those |
+| Script stopped halfway | Nothing is lost. Run it again and it continues where it stopped |
+| `parse_json_fields` returns `None` | The model didn't answer in the requested format. Make the prompt's JSON instructions clearer |
+
+Busy servers, rate limits and temporary errors are retried automatically (after about 1, 2, 4… seconds). You only notice them as a slightly slower run.
+
+## 8. Costs
+
+```powershell
 python -m llm_api.usage "data/filtering/*.jsonl"
 ```
 
-This counts the tokens in your output files and estimates the cost per model. For example, here is the generation pilot:
-
 ```
 model                                            calls   tokens in  tokens out    cost $
-gpt-4o-mini-2024-07-18                             336      144048       61645    0.0586
 meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo        336      145123       68475    0.0063
-total (known prices)                                                              0.0649
+total (known prices)                                                              0.0063
 ```
 
-The prices come from `llm_api/usage.py` and were checked on 2026-10-09. The providers' billing pages show the real numbers. Before a big run, do a small one (`limit=20`), check its cost, and multiply.
+Costs are estimated from the prices in `llm_api/usage.py` (checked 2026-10-09: Llama $0.02 per million input tokens and $0.05 per million output tokens; GPT-4o-mini $0.15 / $0.60). The provider's billing page has the exact numbers.
 
-## API keys: who gets what
+Before a large run, test with `limit=20`, check the cost, and multiply.
 
-We share the same accounts and credit, but each person gets **their own key**. Then nobody has to send keys around, a key can be switched off without affecting anyone else, and we can see who spent what.
+## 9. Managing access tokens
 
-- **OpenAI:** Andrei invites you to the organization (platform.openai.com → Settings → Members) and creates a project called "filtering" with its own spending limit. You make your own key inside that project. OpenAI's usage page then shows generation and filtering costs separately.
-- **DeepInfra:** Andrei creates a separate key named "filtering" and gives it to you in person or by private message, never in a group chat or the repo. To see what filtering cost, use the cost report above on your output files.
+This section is for whoever manages the DeepInfra account.
 
-Rules:
-- Never put a key in code, a config file, a commit or a chat.
-- If a key ends up somewhere public anyway, switch it off in the provider's dashboard straight away and make a new one.
-- Check with Andrei before runs that would cost more than a few dollars.
+Rather than sharing the account's own key, each user gets a **scoped token**. A scoped token:
+- works only for the models listed in it;
+- expires on a set date;
+- stops at a spending limit;
+- is charged to the key that created it, so usage can be tracked separately.
 
----
+### Create a token
 
-## Reference: what's in this folder
+1. In the DeepInfra dashboard (deepinfra.com/dash/api_keys), create an API key used only for signing tokens, e.g. named `filtering`. Keep this key private.
+2. In Git Bash, store that key without displaying it:
+   ```bash
+   read -s -p "Signing key: " DI_KEY; echo
+   ```
+   Paste with Shift+Insert or right-click; nothing appears on screen. `echo ${#DI_KEY}` should print a number above 0.
+3. Request the token. `api_key_name` must be the exact name of the signing key in the dashboard:
+   ```bash
+   curl -s -X POST https://api.deepinfra.com/v1/scoped-jwt \
+     -H "Authorization: Bearer $DI_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"api_key_name": "filtering",
+          "models": ["meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo"],
+          "expires_delta": 3628800,
+          "spending_limit": 5.0}'
+   ```
+   - `expires_delta`: lifetime in seconds (3628800 = 6 weeks; maximum one year).
+   - `spending_limit`: maximum spend in US dollars.
+   - The reply is `{"token": "jwt:..."}`. The token is the whole string between the quotes, including `jwt:`.
+   - The error `no tokens named ...` means `api_key_name` doesn't match a key name in the dashboard.
+4. Hand the token over privately: on a call, with Signal disappearing messages, or with a one-time share link from a password manager (e.g. Bitwarden Send). Never use a group chat, email, the repo or a screenshot.
+5. Close Git Bash, which clears the stored key.
 
-| File | What it does |
-|---|---|
-| `client.py` | The two models (`get_model("llama")`, `get_model("gpt4omini")`) and the client that makes one API call with retries (`LLMClient`). Also `MockClient`, the fake model used by `mock=` |
-| `runner.py` | `run_prompts` (normal scripts) and `run_requests` (notebooks): send many prompts and save the answers |
-| `parsing.py` | `parse_json` and `parse_json_fields`: get the JSON out of a reply |
-| `jsonl.py` | `read_jsonl` and `write_jsonl`: read and write files with one JSON object per line |
-| `usage.py` | The cost report (`python -m llm_api.usage`) |
+### Check a token
 
-| Model name | Provider | Exact model |
-|---|---|---|
-| `"llama"` | DeepInfra (key: `DEEPINFRA_API_KEY`) | `meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo`, the 8-bit "Turbo" version, the only one DeepInfra offers |
-| `"gpt4omini"` | OpenAI (key: `OPENAI_API_KEY`) | `gpt-4o-mini-2024-07-18` |
+```bash
+curl -s "https://api.deepinfra.com/v1/scoped-jwt?jwtoken=<token>" -H "Authorization: Bearer $DI_KEY"
+```
 
-More examples, including a fake server that imitates OpenAI's errors, are in `tests/test_llm_api.py`.
+This shows `expires_at` (Unix time), the allowed `models`, `spending_limit`, and `spending_current` (the amount used so far).
+
+### Revoke access
+
+Delete the signing key in the dashboard. As far as the DeepInfra docs indicate, tokens created with that key then stop working too. Create a new signing key and new tokens if access is still needed.
+
+### GPT-4o-mini access
+
+OpenAI works differently. The account owner invites the person to the organization (platform.openai.com → Settings → Members) and adds them to a separate project with its own budget limit (Settings → Projects → Limits). The person then creates their own key inside that project, and OpenAI's usage page shows each project's costs separately. Make sure they aren't also a member of the Default project, which the project budget doesn't cover.
