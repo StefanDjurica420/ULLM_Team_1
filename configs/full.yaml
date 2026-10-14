@@ -1,12 +1,13 @@
-# Full run: all 28 professions, pool split like O (profession sizes and gender ratios). Prompt type still OPEN.
+# Full run: all 28 professions, pool split like O (profession sizes and gender ratios); contrastive prompt (type 4), ~60-word bios.
 run_name: full_v1
 seed: 42
 output_dir: data/runs/full_v1
+exclude_ids_file: data/fewshot/fewshot_ids.txt   # bios kept out of the pool (few-shot examples for the filters)
 refs_file: data/refs_O.jsonl            # gen.prepare_refs --ids-file bias_in_bios_sample/O_train_ids.txt
 professions: all                        # the 28 Bias in Bios professions
 genders: [male, female]
-prompt: {type: 1, template: prompts/gen_type1_v1.txt, version: v1, n_refs: 3, min_words: 70, max_words: 130}
-counts: {total: 15008, overgen: 1.2}      # per generator, split over profession x gender cells like O; raise overgen to ~1.6 for types 0/4
+prompt: {type: 4, template: prompts/gen_type4_v2.txt, version: v2, n_refs: 3, min_words: 40, max_words: 90}
+counts: {total: 15008, overgen: 1.6}      # per generator, split over profession x gender cells like O; 1.6 because the model picks the gender
 sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 500}
 generators:
   llama:
@@ -30,8 +31,8 @@ generators:
     send_seed: true
     json_mode: true
 validate:
-  min_words: 50
-  max_words: 180
+  min_words: 30                # real O bios: p5 26, median 54, p95 116 words
+  max_words: 130
   min_explanation_words: 8
   shingle_n: 8                 # word n-grams for near-duplicate detection
   max_shingle_overlap: 0.3     # fail if >30% of a bio's 8-grams already occur in refs or accepted bios

@@ -63,6 +63,12 @@ def assert_pool_matches_targets(cfg):
     training = read_jsonl(out / "pool_training.jsonl")
     assert len(training) == len(pool)
     assert set(training[0]) == {"id", "hard_text", "profession", "gender"}
+    for gen in cfg["generators"]:  # one file pair per generator, together = the whole pool
+        own = read_jsonl(out / f"pool_{gen}.jsonl")
+        assert own and all(r["generator"] == gen for r in own)
+        assert all(r["explanation"] for r in own)
+        assert [r["id"] for r in read_jsonl(out / f"pool_training_{gen}.jsonl")] ==             [r["id"] for r in own]
+    assert sum(len(read_jsonl(out / f"pool_{g}.jsonl")) for g in cfg["generators"]) == len(pool)
 
 
 # ---------------------------------------------------------------- units
@@ -134,7 +140,7 @@ def test_type1_pipeline(tmp_path):
     assert any("with a passion for" in w for w in report["warnings"])
     inspect_sample.main(["--config", str(tmp_path / "config.yaml"), "--n", "3"])
     assert (Path(cfg["output_dir"]) / "review_sample.md").exists()
-    manifest = json.loads((Path(cfg["output_dir"]) / "manifest.json").read_text("utf-8"))
+    manifest = read_jsonl(Path(cfg["output_dir"]) / "manifest.jsonl")
     assert {m["generator"] for m in manifest} == set(cfg["generators"])
 
 
@@ -232,6 +238,21 @@ def test_total_counts_follow_refs_and_all_professions(tmp_path):
         exact = 1000 * sum(r["profession"] == p and r["gender"] == g for r in refs) / n_refs
         assert abs(n - exact) < 1
     assert targets[("surgeon", "female")] == 0
+
+
+def test_select_pool_skips_excluded_ids(tmp_path):
+    config = make_config(tmp_path)
+    cfg = run_pipeline(config)
+    first = read_jsonl(Path(cfg["output_dir"]) / "pool.jsonl")
+    excluded = [r["id"] for r in first[:5]]
+    ids_file = tmp_path / "exclude.txt"
+    ids_file.write_text("\n".join(excluded) + "\n", encoding="utf-8")
+    cfg_dict = yaml.safe_load(open(config, encoding="utf-8"))
+    cfg_dict["exclude_ids_file"] = str(ids_file)
+    open(config, "w", encoding="utf-8").write(yaml.safe_dump(cfg_dict))
+    select_pool.main(["--config", config, "--allow-shortfall"])
+    second = {r["id"] for r in read_jsonl(Path(cfg["output_dir"]) / "pool.jsonl")}
+    assert not second & set(excluded)
 
 
 def test_counts_needs_total_or_per_profession(tmp_path):

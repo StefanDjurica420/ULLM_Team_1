@@ -10,6 +10,19 @@ Status tags: **[DECIDED]** agreed or required · **[PROPOSED]** suggested, not y
 O and `bias_in_bios_sample/O_train_ids.txt`. Generation pipeline built (build-order steps 1, 2, 4
 done; `pytest` passes, 24 tests on the mock backend and a fake OpenAI server). Refs prepared from
 the real dataset (`data/refs_pilot.jsonl`, `data/refs_O.jsonl`) and the pilot plan rendered.
+**[DONE 2026-10-14] Full run finished:** 30,016 bios (15,008 per generator, every cell on target,
+distributed exactly like O), $8.59 total (GPT $7.03, Llama $1.57), 0 API errors. Delivery folder +
+data card: `data/deliverables/synthetic_data_v1/` (and `.zip`). 32 bios excluded as few-shot
+examples (`data/fewshot/fewshot_ids.txt`, `exclude_ids_file` in full.yaml). Findings: Llama picks the
+woman 84% (first round), GPT-4o-mini picks the profession's minority gender; GPT puts 20% of female
+physicians in women's/maternal health vs 0% of men; some explanations state stereotyped reasons the
+bio hides.
+**[DECIDED 2026-10-14] Full run = prompt type 4 (contrastive), ~60-word bios:**
+`prompts/gen_type4_v2.txt` ("Write a 60 words biography…", 40–90 words), `overgen: 1.6`,
+validate 30–130 words. O, dev, test re-sampled with `main`'s script and `data/refs_O.jsonl` rebuilt
+on 2026-10-14 (the earlier `data/` folder was lost). `data/runs/full_v1/plan.jsonl` is rendered
+(24,016 calls per generator before top-ups). `select_pool` also writes per-generator files
+(`pool_<gen>.jsonl`, `pool_training_<gen>.jsonl`) so Llama and GPT data can be delivered separately.
 **[DECIDED 2026-10-09] Batch API dropped:** `gen/batch_openai.py` will not be built; GPT-4o-mini
 runs live in the full run too (Batch would save only a few dollars and take hours to days).
 

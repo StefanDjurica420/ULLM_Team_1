@@ -1,4 +1,8 @@
-"""Provenance: one manifest.json entry per generate / batch submit."""
+"""Provenance: one manifest.jsonl line per generate run.
+
+Each entry is appended as one complete line in a single write (no rewrite, no crash cleanup), so
+two generators started at the same moment can't clash over the file or cut off each other's line.
+"""
 from __future__ import annotations
 
 import json
@@ -6,7 +10,7 @@ import platform
 import sys
 from importlib import metadata
 
-from .common import now, run_path, sha256_file, write_json
+from .common import now, run_path, sha256_file
 
 PACKAGES = ("openai", "PyYAML", "datasets", "numpy", "pandas")
 
@@ -18,10 +22,8 @@ def _version(package):
         return None
 
 
-def append_manifest(cfg, step, generator):
-    path = run_path(cfg, "manifest.json")
-    entries = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
-    entries.append({
+def append_manifest(cfg, step, generator, note=None):
+    entry = {
         "time": now(), "step": step, "generator": generator,
         # The config only holds the *name* of the API key's env var, never the key.
         "generator_config": cfg["generators"][generator],
@@ -33,5 +35,8 @@ def append_manifest(cfg, step, generator):
                    "plan": sha256_file(run_path(cfg, "plan.jsonl"))},
         "python": sys.version, "platform": platform.platform(),
         "packages": {p: _version(p) for p in PACKAGES},
-    })
-    write_json(path, entries)
+    }
+    if note:
+        entry["note"] = note
+    with open(run_path(cfg, "manifest.jsonl"), "a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
