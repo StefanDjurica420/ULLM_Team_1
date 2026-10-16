@@ -10,11 +10,13 @@ Does explanation-aware filtering reduce downstream gender bias more effectively 
 
 We plan to use Bias in Bios, which is also used in the paper Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks. The downstream task will be occupation classification from biographies, and we will compare how well the model identifies each occupation for men and women.
 
-We may restrict the experiment to a subset of occupations.
+The experiment uses all 28 occupations. The sampled splits contain 12,000 training, 1,600 development, and 4,000 test examples; see README_Sampling.md for the sampling procedure.
+
+Sampling, synthetic generation, and filtering have been completed, but their full implementation has not yet been merged into main. Downstream training and evaluation remain pending. Generation and filtering implementation details will be documented by the responsible team members.
 
 ## Synthetic data generation
 
-Using only the original data from the training split as a reference, an LLM will generate a shared pool of synthetic biographies, for example 10,000 examples, potentially more depending on the size of the training dataset.
+The generation design uses only the original training split as a reference. The pipeline uses GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, following the model choices in the reference paper. Each generator produces a separate pool of approximately 15,000 synthetic biographies (the previously reported exact count of 15,008 remains to be verified). Both filters process each generator pool with and without access to generator explanations.
 
 Each generated record will contain:
 
@@ -23,7 +25,7 @@ Each generated record will contain:
 - A gender annotation for distribution analysis.
 - A short explanation of the generator’s choices regarding the biography’s content and the person’s attributes.
 
-We will use these explanations as extra information, without assuming they reflect how the model actually made its choices. We will first run a small pilot to check whether they provide useful details about each generated example.
+We use these explanations as extra information, without assuming they reflect how the model actually made its choices.
 
 ## Filtering conditions
 
@@ -33,9 +35,9 @@ We will compare three selection strategies applied independently to the same syn
 2. **Content-only filtering:** an LLM evaluates the biography and occupation label.
 3. **Explanation-aware filtering:** the same LLM evaluates the same information together with the generator’s explanation.
 
-Both LLM filters will use the same evaluation criteria, covering stereotypical content, relevance, and consistency with the occupation label. Each strategy will retain the same number of examples, for example 2,000 out of 10,000.
+Each of the eight filtering branches (two generators x two filters x two explanation-access conditions) retains K = 2,000 examples. Filtering uses the same source pools and reportedly similar prompts; the exact criteria, prompt differences, and controls remain to be documented by the responsible team members. Identical criteria apart from explanation access have not yet been verified.
 
-We will record the occupation and gender distributions of the selected subsets. A comparison with matched occupation and gender counts will help distinguish the contribution of the explanations from changes in group representation alone.
+We will record the occupation and gender distributions of the selected subsets. Whether selection already matches these counts across conditions remains to be confirmed; no additional experimental condition is planned.
 
 ## Downstream training
 
@@ -49,25 +51,27 @@ We will fine-tune separate copies of the same initial model under five condition
 
 The classification training examples will contain biographies and occupation labels. Generator explanations will be used only for selection and will not be included in downstream training.
 
+There are two random subsets of 2,000 examples and two full-pool baselines, one per generator; these do not depend on the filter model. Together with the eight filtered subsets and one original-only baseline, this yields 13 training-data configurations per downstream model and training seed. The downstream classifier model remains to be specified.
+
 The three K-example conditions will use matched training settings. The full synthetic-data condition will provide an additional reference, with its larger dataset size and training cost reported explicitly.
 
 ## Evaluation
 
-All trained models will be evaluated on the same held-out test set. We will measure:
+All trained models will be evaluated on the same held-out test set. The evaluation protocol is not yet finalized. Candidate measures are:
 
 - Overall occupation-classification performance, such as macro-F1.
-- Gender differences in true positive rates within occupations.
-- Variation across repeated training runs.
+- Gender differences in true positive rates within occupations (the likely fairness metric; aggregation remains to be decided).
+- Variation across repeated training runs, subject to the final run budget.
 
 Development data will be used to refine prompts and selection settings. The final test set will not be used to choose these settings.
 
 The primary comparison is explanation-aware versus content-only filtering. Random selection tests whether filtering provides a benefit beyond selecting fewer examples, while the original-only and full-pool conditions establish the effects of augmentation.
 
-## Shuffled explanations
+## Scope
 
-If needed, we will add a condition in which the filter receives an explanation from a different synthetic example of the same occupation, with approximately matched length.
+The current study retains the five condition types above. A shuffled-explanation ablation is reserved as a possible future experiment and discussion point for limitations and future work, rather than a scheduled sixth condition.
 
-This tests whether any benefit depends on the explanation being associated with the specific example, rather than merely providing additional text. Results will be interpreted cautiously because mismatched explanations may also introduce contradictions.
+In that experiment, the filter would receive an explanation from a different synthetic example of the same occupation, with approximately matched length. This could help test whether any benefit depends on the explanation being associated with the specific biography rather than merely providing additional text. Mismatched explanations may also introduce contradictions, so results would require cautious interpretation. Without this control, the current study cannot isolate these effects.
 
 ## Potential contribution
 

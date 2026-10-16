@@ -1,0 +1,36 @@
+\documentclass[sigconf]{acmart}
+
+% Course manuscript: omit publication metadata that has not been assigned.
+\setcopyright{none}
+\settopmatter{printacmref=false}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\acmConference{}{}{}
+\acmBooktitle{}
+\acmYear{}
+\acmDOI{}
+\acmISBN{}
+
+\title{Do Generator Explanations Improve Synthetic Data Filtering for Gender Bias Mitigation?}
+
+% Add confirmed affiliations and email addresses before submission.
+\author{Andrei Avram}
+\author{Mente B\"ogemann}
+\author{Stefan Durica}
+\author{Rudy Schmitz}
+\renewcommand{\shortauthors}{Avram et al.}
+
+\begin{document}
+
+\begin{abstract}
+Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies and their occupation labels, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration selecting 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
+% TODO: Add the main results and their implications after evaluation.
+\end{abstract}
+
+
+
+
+\maketitle
+
+% Subsequent sections will be drafted and added individually.
+
+\end{document}
