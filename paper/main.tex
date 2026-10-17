@@ -9,6 +9,7 @@
 \acmYear{}
 \acmDOI{}
 \acmISBN{}
+\citestyle{acmnumeric}
 
 \title{Do Generator Explanations Improve Synthetic Data Filtering for Gender Bias Mitigation?}
 
@@ -22,7 +23,7 @@
 \begin{document}
 
 \begin{abstract}
-Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies and their occupation labels, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration selecting 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
+Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies, occupation labels, and gender annotations, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration selecting 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
 % TODO: Add the main results and their implications after evaluation.
 \end{abstract}
 
@@ -31,6 +32,58 @@ Large language models (LLMs) can generate additional training examples for downs
 
 \maketitle
 
+\section{Introduction}
+
+Occupation classification from biographies provides a useful setting for studying gender bias in language models. A classifier may achieve good overall performance while still identifying the same occupation less accurately for one gender group than another. Bias in Bios was introduced to study such differences and their relationship to gender information in biographical text~\cite{dearteaga2019bios}.
+
+Adding LLM-generated biographies to the training data raises a further question: how does this augmentation affect existing performance differences between gender groups? Li et al.~\cite{li2026inheritance} investigate how biases in synthetic training data can influence downstream models, a phenomenon they call \emph{bias inheritance}. Their findings motivate our investigation into whether access to generator-provided explanations helps an LLM filter select synthetic training examples that lead to lower downstream gender bias while preserving classification performance.
+
+In this work, we focus on occupation classification using all 28 occupations in Bias in Bios. The task is to predict a person's occupation from a short biography. Besides measuring overall classification performance, this setting allows us to examine differences in true positive rates between gender groups within each occupation. These differences matter because an improvement in overall performance does not necessarily mean that the model performs more equally across groups.
+
+Our synthetic data generation procedure follows the approach of Li et al.~\cite{li2026inheritance}.
+
+\begin{quote}
+\textit{[For Avram: briefly explain how the generation procedure follows the reference paper, including how original biographies are used and whether bias is deliberately elicited through prompting. Mention any important adaptations; leave implementation details for the methodology section.]}
+\end{quote}
+
+We compare two filtering approaches that receive the synthetic biography, its occupation label, and its gender annotation. The content-only filter uses this information to assess each example, whereas the explanation-aware filter additionally receives the corresponding generator explanation. This comparison examines whether explanations provide useful information for data selection beyond the biographies and their associated labels.
+
+\begin{quote}
+\textit{[For Mente: briefly describe what the generator explanations contain and why this information might help identify problematic examples beyond what is visible in the biography itself. Base this description on the implemented prompt and actual generated outputs.]}
+\end{quote}
+
+We treat these explanations as additional generated text rather than as reliable accounts of the model's internal reasoning. Research on chain-of-thought prompting has shown that model-generated explanations can fail to reflect factors that influence a model's answer~\cite{turpin2023unfaithful}. Although that setting differs from ours, it motivates caution when interpreting generator explanations. Their usefulness for filtering must therefore be tested empirically: an explanation could provide helpful information, repeat information already present in the biography, or introduce misleading claims.
+
+Our main research question is: \emph{Does access to generator-provided explanations improve synthetic data selection for reducing downstream gender bias compared with content-only filtering, when both approaches retain the same number of examples?} We also investigate whether filtering provides a benefit over random selection and whether its effectiveness depends on the combination of generator and filter. Using GPT-4o-mini and Llama-3.1-8B-Instruct in both roles allows us to compare combinations from the same model family with combinations from different families. We do not assume that either arrangement will perform better.
+
+To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 2,000 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
+
 % Subsequent sections will be drafted and added individually.
+% TODO: Finalize the evaluation metrics and verify the filtering prompt controls.
+% TODO: Discuss shuffled explanations as a possible future-work ablation.
+
+% References are kept here so the draft remains a standalone source file.
+% They can be moved to BibTeX when the remaining sections are added.
+\begin{thebibliography}{3}
+
+\bibitem{dearteaga2019bios}
+Maria De-Arteaga, Alexey Romanov, Hanna Wallach, Jennifer Chayes, Christian Borgs, Alexandra Chouldechova, Sahin Geyik, Krishnaram Kenthapadi, and Adam Tauman Kalai. 2019.
+Bias in Bios: A Case Study of Semantic Representation Bias in a High-Stakes Setting.
+In \emph{Proceedings of the Conference on Fairness, Accountability, and Transparency}.
+\url{https://arxiv.org/abs/1901.09451}
+
+\bibitem{li2026inheritance}
+Miaomiao Li, Hao Chen, Yang Wang, Tingyuan Zhu, Weijia Zhang, Kaijie Zhu, Kam-Fai Wong, and Jindong Wang. 2026.
+Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks.
+\emph{arXiv preprint arXiv:2502.04419}, version 3.
+\url{https://arxiv.org/abs/2502.04419v3}
+
+\bibitem{turpin2023unfaithful}
+Miles Turpin, Julian Michael, Ethan Perez, and Samuel R. Bowman. 2023.
+Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting.
+In \emph{Advances in Neural Information Processing Systems}, Vol.~36.
+\url{https://arxiv.org/abs/2305.04388}
+
+\end{thebibliography}
 
 \end{document}
