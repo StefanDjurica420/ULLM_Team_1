@@ -31,9 +31,9 @@ COLUMNS = {
 }
 
 # Experiment settings
-EXPERIMENT_ID = "llama_dev_full_001"
-SCORE_MODE = "content_only"  # Or "explanation_aware"
-RUN_MODE = "prepare"         # "prepare", "score", or "filter" # so no submit/check/download stages for Llama like with openai, we dont use a batching api for llama.
+EXPERIMENT_ID = "llama_to_llama_explanation_aware_full_fewshot_v1"
+SCORE_MODE = "explanation_aware"  # Or "explanation_aware"
+RUN_MODE = "filter"         # "prepare", "score", or "filter" # so no submit/check/download stages for Llama like with openai, we dont use a batching api for llama.
 NUMBER_TO_REMOVE = 2000
 
 # Set to 4 to score only four biographies in the first real run.
@@ -42,7 +42,7 @@ CALL_LIMIT = None
 
 # Paths
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_PATH = BASE_DIR / "bias_in_bios_sample" / "dev.csv"
+INPUT_PATH = BASE_DIR / "data" / "synthetic" / "llama" / "filtering_input.csv"
 OUTPUT_DIR = BASE_DIR / "filtering_outputs"
 
 

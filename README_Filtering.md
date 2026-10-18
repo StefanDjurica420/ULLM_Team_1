@@ -1,51 +1,96 @@
 # Filtering the biographies
+In the filtering scripts the synthetic biographies are given a gender bias score from 1.0 to 5.0 by either GPT-4o-mini or Meta Llama 3.1 8B Instruct Turbo.
+The k highest scoring biographies are then removed.
 
-The filtering scripts ask a model to give each biography a gender bias score from 1.0 to 5.0. The biographies with the highest scores are then removed. `content_only` gives the model the biography, profession and gender. `explanation_aware` also includes the explanation written by the model that generated the biography.
+There are two scoring modes:
+`content_only`: the model receives the biography, profession and gender.
+- `explanation_aware`: the model biography, profession, gender and an explanation.
 
-This README describes the code we have now. The `dev_test_001` GPT run used 10 rows from `dev.csv` to check the full process. Llama has also been tested on four real API calls. These are code checks, not results from the final synthetic dataset.
+This explanation is created by the model which creates the synthetic data. It is asked to explain why it generated the biography the way it did.
+
+## Experiments
+
+The synthetic data created by both models is also scored and filtered by the same models.
+
+- GPT-4o-mini is used for filtering through the OpenAI Batch API.
+- Llama 3.1 8B Instruct Turbo through DeepInfra, using the shared `llm_api` code from the data generation.
+
+Each combination of synthetic data source LLM and filtering LLM was run in both scoring modes, resulting in eight total filtering runs. Each run scored 15,008 biographies, and removes 2,000, resulting in a filtered dataset of 13,008.
+
+## Scoring prompt
+
+All runs used the same prompt structure. Each prompt contained five example biographies, including a score and a short reason to guide the model. The prompt is defined in `filtering/filtering_scoring.py`.
 
 ## Files
 
-- `filter_synthetic_data_openai.py` runs the GPT-4o-mini filtering stages through the OpenAI Batch API.
-- `filter_synthetic_data_llama.py` runs the Llama stages through the shared `llm_api` code.
-- `filtering/filtering_dataset.py` loads the CSV, checks its columns and IDs, and saves a copy with biography IDs.
-- `filtering/filtering_scoring.py` builds the prompt and checks that an answer is a number from 1.0 to 5.0.
-- `filtering/filtering_openai.py` prepares, submits, checks and downloads the GPT batches.
-- `filtering/filtering_llama.py` calls Llama and saves its scores.
-- `filtering/filtering_results.py` matches scores to biographies and saves the filtered CSVs.
+- `filter_synthetic_data_openai.py`: configuration of experiment settings, and runs the experiment stages for the GPT-4o-mini filtering.
+
+- `filter_synthetic_data_llama.py`: configuration of experiment settings, and runs the experiment stages for the Llama 3.1 8B filtering.
+
+- `filtering/filtering_dataset.py`: loads, adds IDs, validates, and saves synthetic data.
+
+- `filtering/filtering_scoring.py`: builds prompt and parses scorer model reply.
+
+- `filtering/filtering_openai.py`: builds openai batch requests in the correct format, submits them, checks them, and downloads/parses results.
+
+- `filtering/filtering_llama.py`: calls Llama API and saves valid scores.
+
+- `filtering/filtering_results.py` matches scores to biographies, filters for highest scores, and saves results.
 
 ## Input and setup
 
-The input must be a CSV with `hard_text`, `profession` and `gender` columns. `explanation_aware` also needs an `explanation` column. `bio_id` is optional; the code adds IDs if they are missing.
+Use `python -m pip install -r requirements.txt`, to install the required packages.
 
-Both scripts currently point to the local `bias_in_bios_sample/dev.csv` file. That sample has numerical profession and gender labels, and the prompt uses those values exactly as they appear in the CSV. For the synthetic data, the filtering CSV will need to be made from `pool.jsonl`: use its `id` as `bio_id`, its `bio` as `hard_text`, and keep the profession, gender and explanation. `pool_training.jsonl` has numerical labels and no explanations, so it is not the input for explanation-aware scoring. This conversion is not part of the filtering scripts yet.
+The GPT script reads `OPENAI_API_KEY` from a `.env` file.
 
-Install the packages with `python -m pip install -r requirements.txt`. The GPT script reads `OPENAI_API_KEY` from a local `.env` file. The Llama script uses `DEEPINFRA_API_KEY` from the environment; see [llm_api/README.md](llm_api/README.md) for the token setup. Do not commit API keys.
+The Llama script uses `DEEPINFRA_API_KEY` from the environment, see llm_api/README.md for detailed instructions.
 
-In either script, set `INPUT_PATH`, `EXPERIMENT_ID`, `SCORE_MODE` and `NUMBER_TO_REMOVE` before running. `NUMBER_TO_REMOVE` is the number removed, not the number kept, and it must be smaller than the number of biographies. The `prepare` stage saves `filtering_outputs/<experiment>/synthetic_with_ids.csv`. Later stages load this saved CSV, so changing `INPUT_PATH` with the same experiment ID will not change the data being scored. Use a new experiment ID for a different input dataset or prompt.
+The synthetic data is generated in JSONL format, which was converted to csv format. The `INPUT_PATH` was then set to the correct CSV for
+the GPT-4o-mini and Llama 3.1 8B generated biographies, separately.
+
+The input synthetic data files need a `hard_text`, `profession` and `gender` column. For explanation-aware filtering also an `explanation` column is required.
+
+Before running either script, configure:
+
+- `INPUT_PATH`: the path to the csv for the generated synthetic data you want to filter.
+- `EXPERIMENT_ID`: a unique id for the experiment to make the results identifiable
+- `SCORE_MODE`: `content_only` or `explanation_aware`.
+- `NUMBER_TO_REMOVE`: the number of biographies that will be removed.
+- `MAX_REQUESTS_PER_BATCH`: number of biographies per batch.
 
 ## GPT-4o-mini
+Run `python filter_synthetic_data_openai.py`, through the following stages by setting the `RUN_MODE` to:
 
-Set `RUN_MODE` in `filter_synthetic_data_openai.py`, then run `python filter_synthetic_data_openai.py` for each stage:
+1. `prepare`: to save the dataset with IDs and create JSONL formatted batch input files.
+2. `submit`: with `DRY_RUN = True` to print the number of created batches. Set `DRY_RUN = False` to actually submit the batches
+3. `check`: to print the status of print the status of the submitted batches.
+4. `download`: to save the raw responses and creates a csv with valid scores.
+5. `filter` matches the scores to the saved dataset of step 1 and creates `scored.csv`, `kept.csv` and `removed.csv`, by filtering it.
 
-1. `prepare` saves the dataset with IDs and makes JSONL batch input files. Each line is one request for one biography. `MAX_REQUESTS_PER_BATCH` controls how many requests go in each file. Existing batch input files are not overwritten.
-2. `submit` prints how many batches and requests are waiting. With `DRY_RUN = True`, it only prints the counts. Set `DRY_RUN = False` to submit paid batch jobs. Batches that already have saved submission IDs are skipped.
-3. `check` prints the status of the submitted batches.
-4. `download` saves the raw responses and creates a scores CSV after every biography has one valid score.
-5. `filter` matches the scores to the saved dataset and writes `scored.csv`, `kept.csv` and `removed.csv`.
+The experiment runs used a batch size of 1,000, resulting in 16 batch files for each run.
 
 ## Llama
+Run `python filter_synthetic_data_llama.py`, through the following stages by setting the `RUN_MODE` to:
 
-Set `RUN_MODE` in `filter_synthetic_data_llama.py`, then run `python filter_synthetic_data_llama.py` for each stage:
+1. `prepare`: to save the dataset with IDs
+2. `score` : Sends one request per biography and saves the raw results.
+3. `filter` matches the scores to the saved dataset and creates `scored.csv`, `kept.csv` and `removed.csv`, by filtering it.
 
-1. `prepare` saves the dataset with IDs. It does not make batch files.
-2. `score` sends one request per biography using `llm_api` and saves the raw answers. Set `CALL_LIMIT` to a small number to try a few calls first; set it back to `None` to continue with the remaining biographies. A scores CSV is written only when every biography has a valid score.
-3. `filter` matches the scores to the saved dataset and writes `scored.csv`, `kept.csv` and `removed.csv`.
-
-The current Llama code stops if a saved answer is not a valid score. It does not automatically retry that answer.
+Llama uses individual API calls rather than the OpenAI Batch API. This means there were 15.008 calls per run.
 
 ## Output
 
-Everything is saved under `filtering_outputs/<experiment>/`, which Git ignores. GPT batch inputs are in `batch_inputs/openai/`, submitted job IDs in `batch_jobs/`, and downloaded responses and scores in `batch_results/openai/`. Llama raw answers and scores are in `scoring_results/llama/`. The final CSVs are in `results/<model>/<mode>/`.
+Everything is saved under `filtering_outputs/<experiment>/`:
 
-`scored.csv` contains all biographies with their scores. `kept.csv` contains the biographies left after filtering, and `removed.csv` contains the highest-scoring biographies. If scores are tied, the original row order decides which biographies are removed. Existing final result files are not overwritten.
+- `synthetic_with_ids.csv`: the saved input dataset.
+- `batch_inputs/openai/`: GPT batch request files.
+- `batch_jobs/`: saved openai batch IDs.
+- `batch_results/openai/`: downloaded GPT-4o-mini responses and validated scores.
+- `scoring_results/llama/`: raw Llama 3.1 8B answers and validated scores.
+- `results/<model>/<mode>/`: the final three CSV files:
+
+    - `scored.csv`: all biographies with their scores and model responses.
+    - `kept.csv`: the biographies remaining after filtering.
+    - `removed.csv`: the highest scoring biographies that were removed.
+
+Scores are matched to the original biographies using their request IDs. If scores are tied, the  row order in the original dataset decides which biographies are removed and kept.

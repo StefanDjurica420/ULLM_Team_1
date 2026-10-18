@@ -38,8 +38,8 @@ COLUMNS = {
 }
 
 # Experiment settings
-EXPERIMENT_ID = "dev_test_001"
-SCORE_MODE = "content_only"  # "content_only" or "explanation_aware" to use the explanation column in scoring
+EXPERIMENT_ID = "llama_to_gpt4omini_explanation_aware_full_fewshot_v2" # Unique identifier for this filtering experiment
+SCORE_MODE = "explanation_aware"  # "content_only" or "explanation_aware" to use the explanation column in scoring
 MODEL_NAME = "gpt_4o_mini" # for now only supports gpt_4o_mini
 GPT_MODELS = {"gpt_4o_mini": "gpt-4o-mini"}
 RUN_MODE = "filter"  # "prepare", "submit", "check", "download", "filter"
@@ -50,7 +50,7 @@ MAX_REQUESTS_PER_BATCH = 1000  # Number of biographies per batch input file
 
 # Paths
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_PATH = BASE_DIR / "bias_in_bios_sample" / "dev.csv"  # Testing only, we will use synthetic data later
+INPUT_PATH = BASE_DIR / "data" / "synthetic" / "llama" / "filtering_input.csv"
 OUTPUT_DIR = BASE_DIR / "filtering_outputs"
 
 
