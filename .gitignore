@@ -4,6 +4,7 @@ venv/
 .env/
 env/
 ENV/
+.env
 
 # Generated dataset samples
 bias_in_bios_sample/
@@ -12,7 +13,8 @@ bias_in_bios_sample/
 __pycache__/
 *.py[cod]
 
+# Filtering experiments
+filtering_outputs/
 # Pipeline outputs and secrets
 data/
-.env
 .pytest_cache/
