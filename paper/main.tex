@@ -40,11 +40,7 @@ Adding LLM-generated biographies to the training data raises a further question:
 
 In this work, we focus on occupation classification using all 28 occupations in Bias in Bios. The task is to predict a person's occupation from a short biography. Besides measuring overall classification performance, this setting allows us to examine differences in true positive rates between gender groups within each occupation. These differences matter because an improvement in overall performance does not necessarily mean that the model performs more equally across groups.
 
-Our synthetic data generation procedure follows the approach of Li et al.~\cite{li2026inheritance}.
-
-\begin{quote}
-\textit{[For Avram: briefly explain how the generation procedure follows the reference paper, including how original biographies are used and whether bias is deliberately elicited through prompting. Mention any important adaptations; leave implementation details for the methodology section.]}
-\end{quote}
+Our synthetic data generation procedure follows the approach of Li et al.~\cite{li2026inheritance}. We adopt their contrastive prompt, in which the generator is told that a man and a woman work in the same occupation and workplace and is asked to write a biography of \emph{the outstanding one}. This prompt deliberately elicits a gendered choice, and the generator is not instructed to avoid stereotypes, since such content is what the filters are meant to detect. Each prompt contains biographies from our original training data as style examples, and the generator is additionally asked to explain its choices; these explanations are the only input that distinguishes the explanation-aware filter from the content-only filter. Compared with Li et al., we cover all 28 occupations instead of six, request shorter biographies that match the length of Bias in Bios texts, and distribute the synthetic biographies over occupations and genders exactly as in our original training data, so that augmentation changes the content of the training data but not its demographic composition.
 
 We compare two filtering approaches that receive the synthetic biography, its occupation label, and its gender annotation. The content-only filter uses this information to assess each example, whereas the explanation-aware filter additionally receives the corresponding generator explanation. This comparison examines whether explanations provide useful information for data selection beyond the biographies and their associated labels.
 
@@ -61,8 +57,38 @@ To address these questions, our experimental design includes original-only and f
 \subsection{Dataset Sampling}
 
 \subsection{Synthetic Data Generation}
+We generated two pools of synthetic biographies, one with each model: GPT-4o-mini (\texttt{gpt-4o-mini-2024-07-18}, accessed through the OpenAI API) and Llama-3.1-8B-Instruct (accessed through DeepInfra). DeepInfra serves this model only in an 8-bit floating-point quantised version (\texttt{Meta-Llama-3.1-8B-Instruct-Turbo}), which is a deviation from the full-precision model used by Li et al.~\cite{li2026inheritance}.
+
+Each request used the contrastive single explicit prompt of Li et al.: ``A man and a woman are [occupation]s in the same [workplace]. Write a 60 words biography of the outstanding one.'' The order in which the man and the woman are mentioned was randomised per request, so that word order could not determine the choice; across all requests, each order occurred in half of the cases. Before this instruction, the prompt showed three biographies of the same occupation, drawn at random from the original training data, as examples of the target style. The generator was asked to write a new third-person biography of 40 to 90 words about the chosen person, to refer to that person with gendered pronouns, not to mention the occupation title or obvious variants of it, and not to copy names, employers, or sentences from the examples. The occupation title was excluded because Bias in Bios removes the first sentence of each biography, which usually states the occupation. We asked for 60 words instead of the 100 words used by Li et al.\ because the median length of the original biographies is 54 words. Finally, the generator was asked to explain in two to three sentences whom it chose as the outstanding one and why, which details it included to make the occupation clear, and how it chose the person's background, attributes, and career path. The answer was returned in JSON format with a biography and an explanation field. We did not instruct the generator to avoid stereotypes. Both models were sampled with temperature 0.9 and top-$p$ 0.95.
+
+The contrastive prompt was chosen after a pilot study on three occupations in which we compared it with a prompt that specifies the gender directly. With the gender given in the prompt, the explanations mostly restated the content of the biography: GPT-4o-mini mentioned gender in none of 136 explanations. With the contrastive prompt, the explanations referred to the gender choice in 88\% (Llama-3.1-8B-Instruct) and 75\% (GPT-4o-mini) of the cases, which gives the explanation-aware filter information that is not present in the biography itself.
+
+A generated biography was kept only if it passed all of the following checks: the answer could be parsed as JSON and was not cut off; the explanation contained at least eight words; the biography did not contain the occupation title; it contained 30 to 130 words; its pronouns clearly referred to one gender (at least three times as many pronouns of one gender as of the other); and it was not a near-copy of an example biography or of a previously accepted synthetic biography, defined as more than 30\% of its eight-word sequences already occurring in those texts. The gender label of each synthetic biography was taken from its pronouns.
+
+Each pool contains 15,008 biographies, distributed over the 28 occupations and two genders in exactly the same proportions as the original training data. As a result, adding a pool to the original data changes neither the occupation sizes nor the gender ratio within any occupation, and differences between training conditions can be attributed to the content of the biographies. Because the generator chooses the gender itself, the first round of 24,016 requests per model produced too few biographies for some occupation--gender combinations. For these combinations we sent additional requests with the same prompt, the number of which was based on the observed rate of usable biographies, until every combination contained enough valid biographies. From the valid biographies of each combination, the required number was then selected at random with a fixed seed. Biographies used as few-shot examples for the filters (Section~\ref{sec:filtering}) were excluded from this selection.
+
+Table~\ref{tab:generation} summarises the generation runs. Llama-3.1-8B-Instruct required more requests because it rarely chose the man (see below) and because more of its biographies failed validation, mostly as near-duplicates and because they mentioned the occupation title, often within the name of a professional organisation. Its biographies were also longer than requested.
+
+\begin{table}[t]
+  \caption{Synthetic data generation per generator model.}
+  \label{tab:generation}
+  \begin{tabular}{lrr}
+    \toprule
+    & GPT-4o-mini & Llama-3.1-8B \\
+    \midrule
+    Requests (first round) & 24,016 & 24,016 \\
+    Requests (total)       & 46,360 & 86,736 \\
+    Passed validation      & 87.2\% & 81.6\% \\
+    Biographies in pool    & 15,008 & 15,008 \\
+    Median length (words)  & 59     & 72 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+In the first round, before the additional requests changed the mix of occupations, Llama-3.1-8B-Instruct chose the woman as the outstanding person in 84.3\% of its valid biographies, and did so for almost every occupation. GPT-4o-mini instead tended to choose the gender that is less common in the occupation, for example a woman for 86\% of the surgeon biographies but only 16\% of the yoga teacher biographies. The content of the biographies also differed by gender: GPT-4o-mini placed 20.2\% of female physicians in women's or maternal health against 0.0\% of male physicians, and Llama-3.1-8B-Instruct 9.3\% against 1.4\%. Some explanations stated stereotyped reasons for the choice that are not visible in the biography itself, such as choosing a man ``because research shows that men are more likely to be in leadership positions in the accounting field''.
 
 \subsection{Synthetic Data Filtering}
+\label{sec:filtering}
 In this step the two separate pools from the synthetic data generation: GPT-generated and Llama-generated, both containing 15,008 biographies, were filtered. GPT-4o-mini and Meta Llama 3.1-8B Instruct were used to filter each pool separately using a few-shot prompt for each biography. Each generator-filter combination was run in two scoring modes. This produced eight filtered datasets, each containing 13,008 biographies.
 
 The two scoring modes differed in the information given in the few-shot prompt to the filtering model. In the content-only mode the model received the biography, profession, and gender. In the explanation-aware mode, the model also received the corresponding generator explanation.
