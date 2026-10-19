@@ -23,7 +23,7 @@
 \begin{document}
 
 \begin{abstract}
-Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies, occupation labels, and gender annotations, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration selecting 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
+Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies, occupation labels, and gender annotations, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration removing 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
 % TODO: Add the main results and their implications after evaluation.
 \end{abstract}
 
@@ -48,9 +48,7 @@ Our synthetic data generation procedure follows the approach of Li et al.~\cite{
 
 We compare two filtering approaches that receive the synthetic biography, its occupation label, and its gender annotation. The content-only filter uses this information to assess each example, whereas the explanation-aware filter additionally receives the corresponding generator explanation. This comparison examines whether explanations provide useful information for data selection beyond the biographies and their associated labels.
 
-\begin{quote}
-\textit{[For Mente: briefly describe what the generator explanations contain and why this information might help identify problematic examples beyond what is visible in the biography itself. Base this description on the implemented prompt and actual generated outputs.]}
-\end{quote}
+These generator explanations are short descriptions of the choices which the model says were made during the generation of the synthetic biographies. This could for example be about the characteristics or career path given to the person. These explanations could provide more information about gender related assumptions the model made during generation of the synthetic data and could thus help the filtering model assess the bias in the biographies.
 
 We treat these explanations as additional generated text rather than as reliable accounts of the model's internal reasoning. Research on chain-of-thought prompting has shown that model-generated explanations can fail to reflect factors that influence a model's answer~\cite{turpin2023unfaithful}. Although that setting differs from ours, it motivates caution when interpreting generator explanations. Their usefulness for filtering must therefore be tested empirically: an explanation could provide helpful information, repeat information already present in the biography, or introduce misleading claims.
 
@@ -58,6 +56,23 @@ Our main research question is: \emph{Does access to generator-provided explanati
 
 To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 2,000 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
 
+\section{Methodology}
+
+\subsection{Dataset Sampling}
+
+\subsection{Synthetic Data Generation}
+
+\subsection{Synthetic Data Filtering}
+In this step the two separate pools from the synthetic data generation: GPT-generated and Llama-generated, both containing 15,008 biographies, were filtered. GPT-4o-mini and Meta Llama 3.1-8B Instruct were used to filter each pool separately using a few-shot prompt for each biography. Each generator-filter combination was run in two scoring modes. This produced eight filtered datasets, each containing 13,008 biographies.
+
+The two scoring modes differed in the information given in the few-shot prompt to the filtering model. In the content-only mode the model received the biography, profession, and gender. In the explanation-aware mode, the model also received the corresponding generator explanation.
+In both modes the model was asked to assign a score from 1.0 to 5.0 to the biography based on the information given, where 1.0 means no gender bias, and 5.0 means extremely strong gender bias. Then to guide the model, five example biographies were provided with example scores. These examples were synthetically generated biographies which were not included in the two pools of 15,008 synthetic biographies. The example scores were manually annotated.
+In each of the eight filtering configurations the biographies were ranked in descending order of their given bias scores. The 2,000 highest-scoring biographies were then removed. A fixed number was chosen instead of a score threshold to ensure that each filtered pool consisted of exactly 13,008 biographies. This ensured that the models which were compared in the downstream evaluation could be trained on the same amounts of synthetic data. Ties were resolved by removing entries based on their order in the original synthetic data pool.
+
+Both the filtering models used a temperature of 0 and a maximum output length of 20 tokens. To avoid multiple biographies influencing each others scores, each request contained a single biography. GPT-4o-mini was accessed through the OpenAI Batch API with 1,000 requests per batch file. Meta Llama 3.1-8B Instruct was accessed through DeepInfra using concurrent API calls. Details of the filtering and scoring implementation are available in our GitHub repository \footnote{\url{https://github.com/StefanDjurica420/ULLM_Team_1}}.
+\subsection{Model Training}
+
+\subsection{Evaluation}
 % Subsequent sections will be drafted and added individually.
 % TODO: Finalize the evaluation metrics and verify the filtering prompt controls.
 % TODO: Discuss shuffled explanations as a possible future-work ablation.

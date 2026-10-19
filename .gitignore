@@ -4,6 +4,9 @@ venv/
 .env/
 env/
 ENV/
+.env
+data/
+filtering_outputs/
 
 # Generated dataset samples
 bias_in_bios_sample/
