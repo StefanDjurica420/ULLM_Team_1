@@ -52,6 +52,24 @@ Our main research question is: \emph{Does access to generator-provided explanati
 
 To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 2,000 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
 
+\section{Theoretical Background}
+\begin{quote}
+    \textit{For Stefan: Introduce the Bias in Bios dataset and the occupation classification task. Maybe cite the original biasinbios paper for this again, to explain why this dataset is relevant for studying gender bias. Then discuss occupation and gender imbalance in it and why this mattered for our research while keeping how exactly we handled it for the methods}
+\end{quote}
+
+\begin{quote}
+    \textit{For Avram: Introduce synthetic data augmentation and how llm generated examples can effect models and explain bias inheritance
+ with the original li et al. paper. Also introduce the contrastive prompting method.  }
+\end{quote}
+
+\begin{quote}
+    \textit{Mentes part about data filtering ill do this today but ill talk about few shot prompting and using llms as scorers for classification tasks like ours }
+\end{quote}
+
+\begin{quote}
+    \textit{For Rudy: Explain chosen classifier and learning apporach  }
+\end{quote}
+
 \section{Methodology}
 
 \subsection{Dataset Sampling}
