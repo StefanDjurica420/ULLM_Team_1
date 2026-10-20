@@ -53,9 +53,13 @@ Our main research question is: \emph{Does access to generator-provided explanati
 To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 2,000 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
 
 \section{Theoretical Background}
-\begin{quote}
-    \textit{For Stefan: Introduce the Bias in Bios dataset and the occupation classification task. Maybe cite the original biasinbios paper for this again, to explain why this dataset is relevant for studying gender bias. Then discuss occupation and gender imbalance in it and why this mattered for our research while keeping how exactly we handled it for the methods}
-\end{quote}
+Bias in Bios consists of English-language biographies collected from Common Crawl\footnote{\url{https://commoncrawl.org/}}, covering 28 occupations~\cite{dearteaga2019bios}. Occupation labels were extracted from introductory statements, which were then excluded from the text used for classification. Binary gender annotations were inferred from pronouns, enabling comparisons between the two recorded groups while not capturing the full diversity of gender identities.
+
+The original study found that within-occupation TPR gender gaps were correlated with gender representation. Removing explicit indicators, such as names and gendered pronouns, reduced these gaps but did not eliminate them~\cite{dearteaga2019bios}. This finding suggests that gender-related information can also be conveyed through other features of biographical text.
+
+The dataset contains unequal numbers of biographies across occupations, as well as unequal gender representation within occupations. Its composition reflects the availability of online biographies and the collection procedure rather than a representative sample of the workforce~\cite{dearteaga2019bios}. Within-occupation gender proportions should therefore also be treated as properties of the dataset, rather than population estimates.
+
+These imbalances become particularly relevant when constructing a smaller experimental sample. Proportional sampling can leave less frequent occupations with limited training data, while underrepresented occupation--gender groups may provide few observations for reliable evaluation. This motivated attention to class coverage when preparing our experimental data; the sampling procedure is described in the methods section.
 
 \begin{quote}
     \textit{For Avram: Introduce synthetic data augmentation and how llm generated examples can effect models and explain bias inheritance
@@ -71,6 +75,25 @@ The bias scorer models are instructed with a few-shot prompt. In this method, th
 \section{Methodology}
 
 \subsection{Dataset Sampling}
+
+We used the Hugging Face release of Bias in Bios (\texttt{LabHC/bias\_in\_bios}), retaining all 28 occupations. We sampled 12,000 training, 1,600 development, and 4,000 test examples independently from the corresponding source splits. No records were transferred between splits, and the original biography texts and labels were retained without additional cleaning.
+
+To maintain coverage of less frequent occupations while reducing the dataset size, we formulated the allocation of examples as an integer optimization problem. A uniform minimum of 2.5\% per occupation was initially considered, but it allowed substantial reductions in the representation of frequent occupations. We therefore used a stepped minimum that increases with an occupation's share in the source split.
+
+For a split of target size $N$, let $p_i$ denote the source proportion of occupation $i$, and let $n_i$ be its allocated sample count. The minimum count was defined as
+\begin{equation}
+    m_i = \left\lceil 0.025N
+    \left(1 + \left\lfloor \frac{p_i}{0.05} \right\rfloor\right)
+    \right\rceil.
+\end{equation}
+Thus, occupations accounting for less than 5\% of the source split received a minimum allocation of 2.5\%, those accounting for at least 5\% but less than 10\% received 5\%, and so on. Subject to these minima, the optimization minimized the total absolute deviation from proportional sampling:
+\begin{equation}
+    \min \sum_{i=1}^{28} \left|n_i - Np_i\right|.
+\end{equation}
+
+The allocation also preserved within-occupation gender proportions up to integer rounding. Specifically, if $r_i$ is the source proportion of women in occupation $i$, the allocated female count $f_i$ satisfied $|f_i-r_i n_i| \leq 0.5$. The total male count was fixed to $\lfloor 0.539N+0.5 \rfloor$, reflecting the approximately 53.9\% male share in the source dataset. Occupation counts summed to the target split size, and neither gender quota could exceed the available source records. All source proportions were calculated separately within each split.
+
+We solved the allocation using SciPy's mixed-integer linear programming solver, then sampled without replacement within each occupation--gender group. Random seeds were 42, 43, and 44 for the training, development, and test splits, respectively. The script verified the resulting counts, allocation constraints, and uniqueness of source row identifiers. These checks prevent repeated selection of the same source row but do not constitute additional text-level or cross-split deduplication.
 
 \subsection{Synthetic Data Generation}
 We generated two pools of synthetic biographies, one with each model: GPT-4o-mini (\texttt{gpt-4o-mini-2024-07-18}, accessed through the OpenAI API) and Llama-3.1-8B-Instruct (accessed through DeepInfra). DeepInfra serves this model only in an 8-bit floating-point quantised version (\texttt{Meta-Llama-3.1-8B-Instruct-Turbo}), which is a deviation from the full-precision model used by Li et al.~\cite{li2026inheritance}.
