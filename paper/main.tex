@@ -62,10 +62,8 @@ To address these questions, our experimental design includes original-only and f
  with the original li et al. paper. Also introduce the contrastive prompting method.  }
 \end{quote}
 
-\begin{quote}
-    \textit{Mentes part about data filtering ill do this today but ill talk about few shot prompting and using llms as scorers for classification tasks like ours }
-\end{quote}
-
+A capable LLM can be used to score and filter training data for LLM finetuning. Chen et al.~\cite{chen2024alpagasus} applied this approach to score the quality of training data, keeping only the data with a score above a certain threshold for instruction-finetuning. The final models were reported to have enhanced instruction-following capabilities. Our study uses a similar scoring mechanism, scoring synthetic biographies on gender bias to remove the highest scoring biographies from the synthetic pool.
+The bias scorer models are instructed with a few-shot prompt. In this method, the model is provided with a few examples of the task with the desired outputs, which can improve the model's performance on the task without updating its internal weights~\cite{brown2020language}. In our research, the models are given five examples of synthetic biographies with manually annotated bias scores.
 \begin{quote}
     \textit{For Rudy: Explain chosen classifier and learning apporach  }
 \end{quote}
@@ -124,6 +122,22 @@ Both the filtering models used a temperature of 0 and a maximum output length of
 % References are kept here so the draft remains a standalone source file.
 % They can be moved to BibTeX when the remaining sections are added.
 \begin{thebibliography}{3}
+
+\bibitem{brown2020language}
+Tom B. Brown et al. 2020.
+Language Models are Few-Shot Learners.
+In \emph{Advances in Neural Information Processing Systems},
+Vol. 33.
+\url{https://arxiv.org/abs/2005.14165}
+
+\bibitem{chen2024alpagasus}
+Lichang Chen, Shiyang Li, Jun Yan, Hai Wang,
+Kalpa Gunaratna, Vikas Yadav, Zheng Tang,
+Vijay Srinivasan, Tianyi Zhou, Heng Huang,
+and Hongxia Jin. 2024.
+AlpaGasus: Training a Better Alpaca with Fewer Data.
+In \emph{International Conference on Learning Representations}.
+\url{https://arxiv.org/abs/2307.08701}
 
 \bibitem{dearteaga2019bios}
 Maria De-Arteaga, Alexey Romanov, Hanna Wallach, Jennifer Chayes, Christian Borgs, Alexandra Chouldechova, Sahin Geyik, Krishnaram Kenthapadi, and Adam Tauman Kalai. 2019.
