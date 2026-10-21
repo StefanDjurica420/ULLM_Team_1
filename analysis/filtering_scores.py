@@ -19,9 +19,9 @@ SCORE_VALUES = [
 
 # Folder / experiment name, synthetic data generator, filtering model.
 EXPERIMENTS = [
-    ("GPT-generated-data-GPT-filtering-full", "GPT-4o-mini", "GPT-4o-mini"),
-    ("GPT-generated-data-llama-filtering-full", "GPT-4o-mini", "Llama"),
-    ("Llama-generated-data-filtering-GPT-full", "Llama", "GPT-4o-mini"),
+    ("GPT-generated-data-GPT-filtering-full", "GPT", "GPT"),
+    ("GPT-generated-data-llama-filtering-full", "GPT", "Llama"),
+    ("Llama-generated-data-filtering-GPT-full", "Llama", "GPT"),
     ("Llama-generated-data-llama-filtering-full", "Llama", "Llama"),
 ]
 
@@ -114,9 +114,7 @@ def plot_removal_composition():
             tied_removed_counts.append(int((removed_scores == cutoff).sum())) # counts how many removed scores were the cutoff value
             cutoffs.append(cutoff)
 
-            generator_label = generator.replace("GPT-4o-mini", "GPT")
-            filter_label = filtering_model.replace("GPT-4o-mini", "GPT")
-            row_labels.append(f"{generator_label} data, {filter_label} filter ({label})")
+            row_labels.append(f"{generator} data, {filtering_model} filter ({label})")
 
     figure, (axis, boundary_axis) = plt.subplots(
         1, 2, figsize=(12, 6.5), sharey=True,
@@ -177,7 +175,7 @@ def plot_removal_composition():
         axis.axhline(split, color="#E2E6E9", linewidth=0.8)
         boundary_axis.axhline(split, color="#E2E6E9", linewidth=0.8)
 
-    figure.suptitle(f"How the {NUMBER_TO_REMOVE:,} removals were selected", fontsize=16)
+    figure.suptitle(f"Composition of {NUMBER_TO_REMOVE:,} synthetic biography removals", fontsize=16)
     figure.subplots_adjust(
         left=0.33,
         right=0.98,
