@@ -50,7 +50,7 @@ We treat these explanations as additional generated text rather than as reliable
 
 Our main research question is: \emph{Does access to generator-provided explanations improve synthetic data selection for reducing downstream gender bias compared with content-only filtering, when both approaches retain the same number of examples?} We also investigate whether filtering provides a benefit over random selection and whether its effectiveness depends on the combination of generator and filter. Using GPT-4o-mini and Llama-3.1-8B-Instruct in both roles allows us to compare combinations from the same model family with combinations from different families. We do not assume that either arrangement will perform better.
 
-To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 2,000 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
+To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 13,008 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
 
 \section{Theoretical Background}
 Bias in Bios consists of English-language biographies collected from Common Crawl\footnote{\url{https://commoncrawl.org/}}, covering 28 occupations~\cite{dearteaga2019bios}. Occupation labels were extracted from introductory statements, which were then excluded from the text used for classification. Binary gender annotations were inferred from pronouns, enabling comparisons between the two recorded groups while not capturing the full diversity of gender identities.
@@ -73,7 +73,6 @@ The bias scorer models are instructed with a few-shot prompt. In this method, th
 \end{quote}
 
 \section{Methodology}
-
 \subsection{Dataset Sampling}
 
 We used the Hugging Face release of Bias in Bios (\texttt{LabHC/bias\_in\_bios}), retaining all 28 occupations. We sampled 12,000 training, 1,600 development, and 4,000 test examples independently from the corresponding source splits. No records were transferred between splits, and the original biography texts and labels were retained without additional cleaning.
@@ -141,6 +140,39 @@ Both the filtering models used a temperature of 0 and a maximum output length of
 % Subsequent sections will be drafted and added individually.
 % TODO: Finalize the evaluation metrics and verify the filtering prompt controls.
 % TODO: Discuss shuffled explanations as a possible future-work ablation.
+
+\section{Results}
+\subsection{Filtering Analysis}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/filtering_score_distributions.png}
+    \caption{Gender bias score distributions across all filtering configurations.}
+    \Description{}
+    \label{fig:filtering-scores}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/filtering_removal_composition.png}
+    \caption{Composition of the 2,000 biography removals across all filtering configurations.}
+    \Description{}
+    \label{fig:filtering-removals}
+\end{figure}
+
+Figure~\ref{fig:filtering-scores} shows the distribution of the gender bias scores for all 15,008 synthetic biographies in each synthetic pool, across both generators, both scoring models and both scoring modes.
+It is apparent that GPT-4o-mini gave 1.0 as the dominant score, assigned to 73.2-77.6\% of the biographies during the four runs, while for Llama-3.1-8B that was 2.5, assigned to 88.0-93.2\% of the biographies.
+This difference is consistent across generator model and scoring mode.
+
+For all configurations, the scores are concentrated at a few values, event hough all decimal scores between 1.0 and 5.0 were allowed by the few-shot prompt.
+For GPT-4o-mini as scorer model, they were mostly concentrated at 1.0, 2.0, 3.0 and 4.0, while for Llama-3.1-8B that was 2.5, 2.7, 3.5 and 4.5.
+The distributions were similar between scoring modes, and there was no consistent shift towards higher or lower scores.
+
+The cutoff score is the boundary score after selecting the 2,000 highest scores. This means a fraction of the biographies with this score is removed, while the rest is kept.
+For GPT-4o-mini and Llama-3.1-8B filtering the cutoff scores are 2.0 and 2.5, respectively. Both are consistent across all configurations.
+
+Figure~\ref{fig:filtering-removals} shows how the 2,000 biographies that were removed in each run were divided between biographies scoring above the cutoff value, and scoring at the cutoff value that were removed by pool order.
+The number of biographies removed by pool order ranged from 207 (10.4\%) to 978 (48.9\%).
+The explanation-aware scoring mode resulted in less biograhies that were removed by synthetic pool order in all configurations, except for Llama-3.1-8B filtering on GPT-4o-mini generated synthetic data.
 
 % References are kept here so the draft remains a standalone source file.
 % They can be moved to BibTeX when the remaining sections are added.
