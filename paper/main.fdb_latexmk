@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1792511220.57037 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792511222.04465 0
+["pdflatex"] 1792669439.96984 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792669444.37774 0
   "c:/Users/Stefan" 1762904539 12700 13a2374d6486bd45860f3dfcd2a1bab4 ""
-  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792511218 23444 ad892e6d993f04a56e99f661d37489dd ""
+  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792669436 25820 51999cb771e0d0f7b714799ee36da991 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc" 1792154935 7693 0f2dce6d313c82989ec3a67fc24df2a0 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc" 1792155097 2921 8ca0eb0831f9bc5da080d3697cfe67bf ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc" 1792155097 2933 9ad527ce78d7c5fa0a642dead095f172 ""
@@ -194,9 +194,11 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1792156453 5678096 2c823c228609a3b902dd142302655070 ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1792156523 3668391 e899e91ade3399a756ba67454c2282d1 ""
   "c:/texlive/2026/texmf.cnf" 1792156436 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1792511221 2518 7f909ee84bc58baa1a4f748823c70129 "pdflatex"
-  "main.out" 1792511221 1438 ad16e3aa399a379aa791071eaf68e1eb "pdflatex"
-  "main.tex" 1792511218 23444 ad892e6d993f04a56e99f661d37489dd ""
+  "figures/filtering_removal_composition.png" 1792669392 227453 1e2e8fd8913748e50affce495afec1ab ""
+  "figures/filtering_score_distributions.png" 1792669392 316392 4da3e010de1636a0fc96780863a8fde6 ""
+  "main.aux" 1792669444 3405 8ede31fb7e41b1549f81710054f1c738 "pdflatex"
+  "main.out" 1792669444 1704 39cb0beb1e7ac0a7fa6115f0adce5dc8 "pdflatex"
+  "main.tex" 1792669436 25820 51999cb771e0d0f7b714799ee36da991 ""
   (generated)
   "main.aux"
   "main.log"
