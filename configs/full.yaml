@@ -1,0 +1,39 @@
+# Full run: all 28 professions, pool split like O (profession sizes and gender ratios); contrastive prompt (type 4), ~60-word bios.
+run_name: full_v1
+seed: 42
+output_dir: data/runs/full_v1
+exclude_ids_file: data/fewshot/fewshot_ids.txt   # bios kept out of the pool (few-shot examples for the filters)
+refs_file: data/refs_O.jsonl            # gen.prepare_refs --ids-file bias_in_bios_sample/O_train_ids.txt
+professions: all                        # the 28 Bias in Bios professions
+genders: [male, female]
+prompt: {type: 4, template: prompts/gen_type4_v2.txt, version: v2, n_refs: 3, min_words: 40, max_words: 90}
+counts: {total: 15008, overgen: 1.6}      # per generator, split over profession x gender cells like O; 1.6 because the model picks the gender
+sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 500}
+generators:
+  llama:
+    backend: openai_compat              # openai_compat | openai_batch | mock
+    provider: deepinfra
+    base_url: https://api.deepinfra.com/v1/openai
+    api_key_env: DEEPINFRA_API_KEY
+    model: meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo   # DeepInfra only serves the FP8 Turbo variant (checked 2026-10-09)
+    concurrency: 32
+    retries: 5
+    send_seed: true                     # set false if the provider rejects `seed`
+    json_mode: true                     # response_format json_object
+  gpt4omini:
+    backend: openai_compat              # live calls (Batch API skipped: saves only a few dollars)
+    provider: openai
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    model: gpt-4o-mini-2024-07-18
+    concurrency: 16
+    retries: 5
+    send_seed: true
+    json_mode: true
+validate:
+  min_words: 30                # real O bios: p5 26, median 54, p95 116 words
+  max_words: 130
+  min_explanation_words: 8
+  shingle_n: 8                 # word n-grams for near-duplicate detection
+  max_shingle_overlap: 0.3     # fail if >30% of a bio's 8-grams already occur in refs or accepted bios
+  opening_share_warn: 0.05     # warn if one 4-word opening covers >5% of a generator's passed bios
