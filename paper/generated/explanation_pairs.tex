@@ -1,0 +1,19 @@
+\begin{table}[!htbp]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta$) are EA minus CO, in percentage points.}
+\label{tab:explanation-pairs}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{Macro F1} & \multicolumn{3}{c}{RMS TPR gap} \\
+\cmidrule(lr){2-4}\cmidrule(l){5-7}
+Gen./filter & CO & EA & $\Delta$ & CO & EA & $\Delta$ \\
+\midrule
+GPT/GPT & 85.03 & 85.04 & +0.01 & 10.81 & 8.73 & -2.08 \\
+GPT/Llama & 85.13 & 84.80 & -0.33 & 11.02 & 9.59 & -1.43 \\
+Llama/GPT & 84.87 & 84.73 & -0.14 & 10.90 & 9.74 & -1.16 \\
+Llama/Llama & 84.38 & 83.53 & -0.85 & 11.27 & 14.09 & +2.82 \\
+\bottomrule
+\end{tabular}
+\end{table}

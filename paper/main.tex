@@ -1,4 +1,5 @@
 \documentclass[sigconf]{acmart}
+\usepackage{placeins}
 
 % Course manuscript: omit publication metadata that has not been assigned.
 \setcopyright{none}
@@ -105,7 +106,7 @@ A generated biography was kept only if it passed all of the following checks: th
 
 Each pool contains 15,008 biographies, distributed over the 28 occupations and two genders in exactly the same proportions as the original training data. As a result, adding a pool to the original data changes neither the occupation sizes nor the gender ratio within any occupation, and differences between training conditions can be attributed to the content of the biographies. Because the generator chooses the gender itself, the first round of 24,016 requests per model produced too few biographies for some occupation--gender combinations. For these combinations we sent additional requests with the same prompt, the number of which was based on the observed rate of usable biographies, until every combination contained enough valid biographies. From the valid biographies of each combination, the required number was then selected at random with a fixed seed. Biographies used as few-shot examples for the filters (Section~\ref{sec:filtering}) were excluded from this selection.
 
-Table~\ref{tab:generation} summarises the generation runs. Llama-3.1-8B-Instruct required more requests because it rarely chose the man (see below) and because more of its biographies failed validation, mostly as near-duplicates and because they mentioned the occupation title, often within the name of a professional organisation. Its biographies were also longer than requested.
+\hyperref[tab:generation]{Table~\ref*{tab:generation}} summarises the generation runs. Llama-3.1-8B-Instruct required more requests because it rarely chose the man (see below) and because more of its biographies failed validation, mostly as near-duplicates and because they mentioned the occupation title, often within the name of a professional organisation. Its biographies were also longer than requested.
 
 \begin{table}[t]
   \caption{Synthetic data generation per generator model.}
@@ -159,7 +160,7 @@ Both the filtering models used a temperature of 0 and a maximum output length of
     \label{fig:filtering-removals}
 \end{figure}
 
-Figure~\ref{fig:filtering-scores} shows the distribution of the gender bias scores for all 15,008 synthetic biographies in each synthetic pool, across both generators, both scoring models and both scoring modes.
+\hyperref[fig:filtering-scores]{Figure~\ref*{fig:filtering-scores}} shows the distribution of the gender bias scores for all 15,008 synthetic biographies in each synthetic pool, across both generators, both scoring models and both scoring modes.
 It is apparent that GPT-4o-mini gave 1.0 as the dominant score, assigned to 73.2-77.6\% of the biographies during the four runs, while for Llama-3.1-8B that was 2.5, assigned to 88.0-93.2\% of the biographies.
 This difference is consistent across generator model and scoring mode.
 
@@ -170,12 +171,100 @@ The distributions were similar between scoring modes, and there was no consisten
 The cutoff score is the boundary score after selecting the 2,000 highest scores. This means a fraction of the biographies with this score is removed, while the rest is kept.
 For GPT-4o-mini and Llama-3.1-8B filtering the cutoff scores are 2.0 and 2.5, respectively. Both are consistent across all configurations.
 
-Figure~\ref{fig:filtering-removals} shows how the 2,000 biographies that were removed in each run were divided between biographies scoring above the cutoff value, and scoring at the cutoff value that were removed by pool order.
+\hyperref[fig:filtering-removals]{Figure~\ref*{fig:filtering-removals}} shows how the 2,000 biographies that were removed in each run were divided between biographies scoring above the cutoff value, and scoring at the cutoff value that were removed by pool order.
 The number of biographies removed by pool order ranged from 207 (10.4\%) to 978 (48.9\%).
 The explanation-aware scoring mode resulted in less biograhies that were removed by synthetic pool order in all configurations, except for Llama-3.1-8B filtering on GPT-4o-mini generated synthetic data.
 
+\subsection{Downstream Classification Performance and Gender Bias}
+\label{sec:downstream-results}
+
+\hyperref[tab:downstream-all]{Table~\ref*{tab:downstream-all}} summarizes the 14 models evaluated on the same 3,998 test biographies. GPT and Llama refer to GPT-4o-mini and Llama-3.1-8B-Instruct, respectively. Macro F1 is averaged over the 28 occupations, and responses that could not be parsed are counted as errors. We summarize gender differences using the root mean square (RMS) and mean absolute (MA) TPR gaps across occupations; lower values indicate smaller disparities. Shared baselines appear only once.
+
+\input{generated/downstream_all}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/downstream_tpr_gaps.png}
+    \caption{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}
+    \Description{Heatmap of signed gender TPR gaps across occupations and model configurations. Red indicates higher female TPR and blue indicates higher male TPR. Each occupation is labeled with its female and male test support.}
+    \label{fig:downstream-tpr-gaps}
+\end{figure*}
+
+Fine-tuning on the original data increased accuracy from 71.21\% to 85.29\% and macro F1 from 73.29\% to 84.94\%, while reducing the RMS TPR gap from 12.60 to 9.72 percentage points. Adding the full GPT or Llama pool reduced the gap further, to 7.16 and 7.31 points, but macro F1 fell slightly to 84.32\% and 84.02\%. Using all synthetic examples therefore gave smaller gender gaps at a small cost in classification performance compared with training on the original data alone.
+
+Adding explanations reduced both RMS and MA TPR gaps in three of the four generator--filter combinations (\hyperref[tab:explanation-pairs]{Table~\ref*{tab:explanation-pairs}}). The largest RMS reduction occurred when GPT was used for both generation and filtering, with almost no change in macro F1. Using different model families for the two steps also gave smaller gaps, with slight decreases in macro F1. Llama/Llama was the exception: explanations increased the RMS gap by 2.82 percentage points and reduced macro F1 by 0.85 points.
+
+\input{generated/explanation_pairs}
+
+Compared with random selection from the same generator, all four content-only configurations had larger RMS and MA gaps. Explanation-aware filtering gave smaller gaps than random selection for both generators when GPT was the filter, but not when Llama was the filter. Neither filtering approach gave smaller gaps than using the corresponding full synthetic pool.
+
+The full pools contain more training examples than the filtered and random subsets. With our limited training set, keeping these extra examples may be more useful than removing examples rated as biased. Filtering may also remove useful information for recognizing occupations in both gender groups. We cannot separate the effect of data quantity from the effect of selection in these comparisons, so this is a possible explanation for the smaller gaps rather than a confirmed cause.
+
+Using the same model family for generation and filtering offered no consistent advantage. The GPT--GPT and Llama--Llama explanation-aware conditions had the smallest and largest RMS gaps among the filtered models, respectively.
+
+\subsection{Occupation-Level Analysis}
+\label{sec:occupation-results}
+
+\hyperref[fig:downstream-tpr-gaps]{Figure~\ref*{fig:downstream-tpr-gaps}} shows how the TPR gaps vary by occupation. Positive values mean higher TPR for female biographies, and negative values mean higher TPR for male biographies. Some groups are small: there are only seven male dietitian biographies, so one additional correct prediction changes their TPR by about 14.3 percentage points.
+
+Adding explanations reduced the absolute gap in 15 of the 28 occupations for GPT/GPT, Llama/GPT, and Llama/Llama, and in 13 occupations for GPT/Llama (\hyperref[tab:occupation-changes]{Table~\ref*{tab:occupation-changes}}). Even though more occupations improved than worsened for Llama/Llama, its overall RMS gap increased. This is possible because RMS squares the gaps before averaging, giving more weight to large differences.
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}
+    \label{tab:occupation-changes}
+    \small
+    \begin{tabular}{llrrr}
+        \toprule
+        Generator & Filter & Smaller & Larger & Unchanged \\
+        \midrule
+        GPT & GPT & 15 & 13 & 0 \\
+        GPT & Llama & 13 & 14 & 1 \\
+        Llama & GPT & 15 & 13 & 0 \\
+        Llama & Llama & 15 & 13 & 0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Surgeon is one example of this effect (\hyperref[tab:occupation-examples]{Table~\ref*{tab:occupation-examples}}). For Llama/Llama, adding explanations reduced female TPR from 47.1\% to 29.4\%, while male TPR changed little, from 77.8\% to 76.8\%. The absolute gap grew from 30.7 to 47.4 percentage points, contributing to the higher overall RMS gap. However, there are only 17 female surgeon biographies. The drop represents just three fewer correct predictions, from eight to five, which limits what we can conclude from it.
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}
+    \label{tab:occupation-examples}
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lllrrr}
+        \toprule
+        Occupation & Configuration & Group & $n$ & CO & EA \\
+        \midrule
+        Surgeon & Llama/Llama & F & 17 & 47.1 & 29.4 \\
+                &             & M & 99 & 77.8 & 76.8 \\
+        \addlinespace
+        Teacher & GPT/GPT & F & 83 & 60.2 & 66.3 \\
+                &         & M & 55 & 65.5 & 65.5 \\
+        \addlinespace
+        Teacher & Llama/GPT & F & 83 & 59.0 & 56.6 \\
+                &           & M & 55 & 63.6 & 56.4 \\
+        \addlinespace
+        Nurse & GPT/GPT & F & 174 & 91.4 & 82.8 \\
+              &         & M & 17 & 70.6 & 70.6 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A pattern that appeared in all eight filtered conditions was higher female TPR for physician, with gaps of 5.6 to 23.9 percentage points. This occupation has 148 female and 152 male test examples. Male physician biographies were also more often incorrectly classified as surgeon in every filtered condition. With GPT generation and content-only GPT filtering, for example, this happened for 37 of 152 male examples, compared with nine of 148 female examples. The models repeatedly confused these two occupations, but the predictions alone do not explain why.
+
+For teacher, a smaller gap did not always mean better predictions. With GPT/GPT, female TPR rose from 60.2\% to 66.3\%, while male TPR stayed at 65.5\%. With Llama/GPT, however, TPR fell for both groups, reaching 56.6\% for women and 56.4\% for men. The groups became almost equal because performance declined, especially for men. A similar case occurred for nurse with GPT/GPT: the gap narrowed because female TPR fell while male TPR stayed the same.
+
+When combining female and male test examples, no occupation had higher TPR in all four generator--filter combinations after adding explanations. Female TPR did increase in all four combinations for pastor, personal trainer, and yoga teacher, though often by only a few correct predictions. For professor, both groups improved in three of the four combinations. The gains were therefore limited to particular occupations, groups, and model combinations.
+
+These comparisons are exploratory. Time constraints allowed only one training seed (42) per configuration, and all models were evaluated on the same test set. A pattern across several configurations is therefore not evidence from independent repetitions, and we do not claim statistical significance. Changes in occupation--gender composition after filtering and the use of pool order to break score ties could also affect the results; we did not isolate their effects.
+
 % References are kept here so the draft remains a standalone source file.
 % They can be moved to BibTeX when the remaining sections are added.
+\FloatBarrier
+\balance
 \begin{thebibliography}{3}
 
 \bibitem{brown2020language}
