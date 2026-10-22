@@ -14,3 +14,16 @@ bias_in_bios_sample/
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# paper: generated previews and local helper files (Rudy)
+paper/WIP_rudy.pdf
+paper/WIP_rudy.aux
+paper/WIP_rudy.log
+paper/WIP_rudy.out
+paper/WIP_rudy.synctex.gz
+paper/WIP_refs.tex
+paper/main_preview.pdf
+paper/WIP_rudy.tex
+paper/WIP_new_refs.tex
+paper/build_wip.py
+paper/build_main_preview.py

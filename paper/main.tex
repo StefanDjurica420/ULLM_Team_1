@@ -54,6 +54,7 @@ Our main research question is: \emph{Does access to generator-provided explanati
 To address these questions, our experimental design includes original-only and full-pool training baselines, together with augmentation using randomly selected, content-only filtered, and explanation-aware filtered subsets. Each selected subset contains 13,008 examples. Generator explanations are used only for filtering and are excluded from downstream classifier training. By examining classification performance alongside within-occupation gender differences, we aim to determine whether filtering is useful, whether explanations provide an additional benefit, and how these effects vary across generator--filter combinations.
 
 \section{Theoretical Background}
+\label{sec:background}
 Bias in Bios consists of English-language biographies collected from Common Crawl\footnote{\url{https://commoncrawl.org/}}, covering 28 occupations~\cite{dearteaga2019bios}. Occupation labels were extracted from introductory statements, which were then excluded from the text used for classification. Binary gender annotations were inferred from pronouns, enabling comparisons between the two recorded groups while not capturing the full diversity of gender identities.
 
 The original study found that within-occupation TPR gender gaps were correlated with gender representation. Removing explicit indicators, such as names and gendered pronouns, reduced these gaps but did not eliminate them~\cite{dearteaga2019bios}. This finding suggests that gender-related information can also be conveyed through other features of biographical text.
@@ -69,9 +70,53 @@ These imbalances become particularly relevant when constructing a smaller experi
 
 A capable LLM can be used to score and filter training data for LLM finetuning. Chen et al.~\cite{chen2024alpagasus} applied this approach to score the quality of training data, keeping only the data with a score above a certain threshold for instruction-finetuning. The final models were reported to have enhanced instruction-following capabilities. Our study uses a similar scoring mechanism, scoring synthetic biographies on gender bias to remove the highest scoring biographies from the synthetic pool.
 The bias scorer models are instructed with a few-shot prompt. In this method, the model is provided with a few examples of the task with the desired outputs, which can improve the model's performance on the task without updating its internal weights~\cite{brown2020language}. In our research, the models are given five examples of synthetic biographies with manually annotated bias scores.
-\begin{quote}
-    \textit{For Rudy: Explain chosen classifier and learning apporach  }
-\end{quote}
+
+In the original Bias in Bios study, De-Arteaga et al.~\cite{dearteaga2019bios} compared three classifiers of increasing complexity: logistic regression on bag-of-words features, logistic regression on averaged word embeddings, and a deep recurrent neural network trained end-to-end.
+In contrast to these task-specific classifiers, we follow Li et al.~\cite{li2026inheritance}, who fine-tuned Llama-3.1-8B-Instruct and evaluated it on Bias in Bios occupation classification, and use this instruction-tuned LLM as the classifier.
+Just like~\cite{li2026inheritance}, we give the model only the biography, in which the person's gender is visible, and ask it to answer with one of the listed occupations (here 28).
+Like the bias scorer models above, an instruction-tuned model~\cite{grattafiori2024llama} can already follow such a prompt and thus classify without any training. Fine-tuning then adapts it to the occupation labels and to the biographies in its training data.
+
+Why do we fine-tune the classifier with Low-Rank Adaptation (LoRA)~\cite{hu2022lora}?
+Updating all weights of an 8-billion-parameter model would need far more GPU memory than a single GPU offers, so, as in~\cite{li2026inheritance}, we train only a smaller number of parameters.
+LoRA freezes the pretrained weights and adds small trainable low-rank matrices to selected weight matrices, in our case the query and value projections~\cite{hu2022lora}.
+This reduced the number of trainable parameters to about 3.4 million (0.04\% of the model). Hu et al.\ report that LoRA performs on par with or better than full fine-tuning on several language models.
+
+As noted above, gender information is carried not only by names and pronouns but also by other features of the text, so the classifier can learn gender-related associations from its training biographies, including synthetic ones~\cite{li2026inheritance}.
+
+To measure gender bias in occupation classification, we follow De-Arteaga et al.~\cite{dearteaga2019bios} and use the true positive rate (TPR) gender gap.
+For an occupation $y$ and gender $g$, $\mathrm{TPR}_{g,y}$ is the share of people of gender $g$ with occupation $y$ whose occupation is predicted correctly, and $\mathrm{Gap}_y$ is the difference between $\mathrm{TPR}_{\mathrm{female},y}$ and $\mathrm{TPR}_{\mathrm{male},y}$:
+\begin{align}
+  \mathrm{TPR}_{g,y} &= P(\hat{Y} = y \mid G = g,\, Y = y), \\
+  \mathrm{Gap}_y &= \mathrm{TPR}_{\mathrm{female},y} - \mathrm{TPR}_{\mathrm{male},y},
+\end{align}
+where $\hat{Y}$ is the predicted and $Y$ the true occupation.
+A negative gap means that women with occupation $y$ are recognised less often than men.
+A gap of zero means that women and men with the same occupation are recognised equally often. As De-Arteaga et al.~\cite{dearteaga2019bios} note, this is closely related to the fairness criterion of equality of opportunity~\cite{hardt2016equality}, which requires equal true positive rates across groups.
+To summarise the gaps over the set $\mathcal{Y}$ of all 28 occupations in one number per model, we use their root mean square, as proposed by Romanov et al.~\cite{romanov2019name} and also used by Ravfogel et al.~\cite{ravfogel2020null}:
+\begin{equation}
+  \mathrm{Gap}^{\mathrm{RMS}} = \sqrt{\frac{1}{|\mathcal{Y}|}\sum_{y \in \mathcal{Y}} \mathrm{Gap}_y^{2}}.
+\end{equation}
+Unlike a plain average, the root mean square gives large gaps more weight~\cite{romanov2019name}.
+We also report the mean absolute (MA) gap, which weights all gaps equally:
+\begin{equation}
+  \mathrm{Gap}^{\mathrm{MA}} = \frac{1}{|\mathcal{Y}|}\sum_{y \in \mathcal{Y}} \left|\mathrm{Gap}_y\right|.
+\end{equation}
+A root mean square that is much larger than the mean absolute gap indicates that a few occupations have large gaps.
+Because a lower gap is only useful if the model still classifies well, we also report accuracy and macro-F1, following Ravfogel et al.~\cite{ravfogel2020null}, who report accuracy next to the RMS gap.
+Accuracy is the share of biographies whose occupation is predicted correctly:
+\begin{equation}
+  \mathrm{Accuracy} = P(\hat{Y} = Y).
+\end{equation}
+Because the occupations differ strongly in size, accuracy is dominated by the frequent ones.
+Macro-F1 instead computes the F1 score, the harmonic mean of precision and recall, for each occupation separately and averages these scores, so that every occupation counts equally:
+\begin{align}
+  \mathrm{P}_y &= P(Y = y \mid \hat{Y} = y), \qquad
+  \mathrm{R}_y = P(\hat{Y} = y \mid Y = y), \\
+  \mathrm{F1}_y &= \frac{2\,\mathrm{P}_y \mathrm{R}_y}{\mathrm{P}_y + \mathrm{R}_y}, \qquad
+  \text{Macro-F1} = \frac{1}{|\mathcal{Y}|}\sum_{y \in \mathcal{Y}} \mathrm{F1}_y,
+\end{align}
+where $\mathrm{P}_y$ is the precision and $\mathrm{R}_y$ the recall for occupation $y$.
+The recall is the TPR of occupation $y$ without distinguishing between genders.
 
 \section{Methodology}
 \subsection{Dataset Sampling}
@@ -136,11 +181,113 @@ In each of the eight filtering configurations the biographies were ranked in des
 
 Both the filtering models used a temperature of 0 and a maximum output length of 20 tokens. To avoid multiple biographies influencing each others scores, each request contained a single biography. GPT-4o-mini was accessed through the OpenAI Batch API with 1,000 requests per batch file. Meta Llama 3.1-8B Instruct was accessed through DeepInfra using concurrent API calls. Details of the filtering and scoring implementation are available in our GitHub repository \footnote{\url{https://github.com/StefanDjurica420/ULLM_Team_1}}.
 \subsection{Model Training}
+\label{sec:training}
+
+\paragraph{Classifier.}
+We used Llama-3.1-8B-Instruct~\cite{grattafiori2024llama}\footnote{\url{https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct}} in bf16 precision as the downstream classifier (Section~\ref{sec:background}).
+Each biography was inserted into the following prompt, taken from the evaluation code of Li et al.~\cite{li2026inheritance}, which lists all 28 occupations:
+\begin{quote}\small\ttfamily\raggedright
+What is the profession of the person in the following text? Just say "accountant", "architect", \ldots, "yoga teacher"; choose one option without explanation:\\
+{\normalfont\itshape [biography]}\\
+Answer:
+\end{quote}
+The same prompt was used for the training, development and test data, so training and evaluation use exactly the same input format. The untuned base model was evaluated with the same prompt as a reference.
+The prompt was given as plain text, without Llama's chat template (the special tokens that mark user and assistant turns).
+
+\paragraph{Training procedure.}
+Each training example paired this prompt, filled in with a biography, with the correct occupation as the expected answer.
+Each training set was shuffled so that original and synthetic biographies were mixed within batches, rather than seen one block after the other. A fixed random seed (42) makes this order reproducible.
+We fine-tuned with LoRA~\cite{hu2022lora} as described in Section~\ref{sec:background}, using next-token prediction with the loss computed only on the answer, so the model learned to predict the occupation rather than to reproduce the prompt or biography.
+
+\paragraph{Settings.}
+All settings are listed in Table~\ref{tab:training} and were identical for every training condition, including the learning rate selected below. Only the training data differed.
+As in Li et al.~\cite{li2026inheritance}, all models were trained for three epochs, and the LoRA and optimisation settings in Table~\ref{tab:training} follow their code. We deviated from their code in three respects. First, we trained on the full bf16 model instead of a 4-bit quantized one. Second, we used the evaluation prompt also for training, with the loss computed only on the answer, whereas their code trains on a differently formatted prompt with the loss on the whole text. Third, we used a different learning rate, selected with the test described below.
+
+\begin{table}[H]
+  \centering
+  \caption{Fine-tuning settings, identical for all training conditions.}
+  \label{tab:training}
+  \small
+  \begin{tabular}{ll}
+    \toprule
+    Setting & Value \\
+    \midrule
+    Base model            & Llama-3.1-8B-Instruct (bf16) \\
+    Method                & LoRA, query and value projections \\
+    LoRA rank / $\alpha$ / dropout & 8 / 32 / 0.1 \\
+    Trainable parameters  & 3.4M (0.04\%) \\
+    Loss                  & on completion (label) only \\
+    Epochs                & 3 \\
+    Batch size            & 8 $\times$ 4 accumulation steps = 32 \\
+    Learning rate         & $2\times10^{-4}$ (selected on development set) \\
+    Schedule              & constant, 3\% linear warm-up \\
+    Optimizer             & AdamW, weight decay 0.001 \\
+    Gradient clipping     & max norm 0.3 \\
+    Max.\ sequence length & 1,024 tokens (no truncation occurred) \\
+    Packing               & no \\
+    Precision             & bf16, gradient checkpointing \\
+    Seed                  & 42 \\
+    Optimisation steps    & 1,125 / 2,346 / 2,532$^{a}$ \\
+    Decoding (test)       & greedy, max.\ 30 new tokens \\
+    Hardware              & 1 $\times$ NVIDIA A100 40\,GB \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize $^{a}$ Original only (12,000) / random and filtered (25,008) / full pool (27,008).}
+\end{table}
+
+\paragraph{Learning-rate selection.}
+Li et al.\ used a learning rate of $1\times10^{-5}$. Because of the differences listed above and our larger training sets (12,000 to 27,008 instead of 3,600 examples), we could not simply adopt this value, and we found no source that recommends a learning rate for a comparable setting. We therefore first ran a test and selected the learning rate from $\{1\times10^{-5}, 5\times10^{-5}, 1\times10^{-4}, 2\times10^{-4}\}$ on the development set of 1,598 biographies (the 1,600 sampled ones minus two that also occurred in the test set), evaluated as described in Section~\ref{sec:evaluation}, using the model trained on the original data only and the settings above.
+The selection criterion was macro-F1 over the 28 occupations, which weights all occupations equally. The gender gap was deliberately not used, to avoid tuning towards the outcome under study.
+Macro-F1 increased with the learning rate (0.836, 0.850, 0.856 and 0.862), and $2\times10^{-4}$ was used for all conditions. Because this is the largest value tested, a higher rate might have performed slightly better.
+
+\paragraph{Training runs.}
+In total we trained 13 models (Table~\ref{tab:conditions}). The full pool and the random subset do not depend on the filter model, so each was trained only once per generator.
+As a control for the filters, the random subset was drawn uniformly at random from the full pool of the same generator, with a fixed seed (42). All subsets contain 13,008 synthetic biographies, so the random and filtered conditions are directly comparable in size. Their occupation and gender composition can still differ, as discussed in Section~\ref{sec:occupation-results}.
+
+\begin{table}[H]
+  \centering
+  \caption{Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once.}
+  \label{tab:conditions}
+  \small
+  \begin{tabular}{lrrr}
+    \toprule
+    Condition & Synthetic & Training & Models \\
+              & biographies & examples & \\
+    \midrule
+    Original only                 & 0      & 12,000 & 1 \\
+    + full pool                   & 15,008 & 27,008 & 2 \\
+    + random subset               & 13,008 & 25,008 & 2 \\
+    + content-only filtered       & 13,008 & 25,008 & 4 \\
+    + explanation-aware filtered  & 13,008 & 25,008 & 4 \\
+    \midrule
+    Total trained                 &        &        & 13 \\
+    Base model (untuned)          & --     & --     & reference \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  {\footnotesize Models: one per generator (2), or one per generator--filter model combination (4).}
+\end{table}
+
+\paragraph{Implementation.}
+During this project, Eindhoven University of Technology (TU/e)\footnote{\url{https://www.tue.nl/en/}} provided a generous compute budget on Snellius, the Dutch national supercomputer operated by SURF\footnote{\url{https://www.surf.nl/en}}. Even so, full fine-tuning would have needed more memory than a single NVIDIA A100 GPU (40\,GB) offers. Some preliminary experiments used 4-bit quantized models on a laptop GPU, but all classifiers were trained and evaluated on Snellius without quantization, each on a single A100. We used Hugging Face Transformers, PEFT and TRL (\texttt{SFTTrainer}, prompt--completion format). Training took about 50 minutes for the original-data model and 1.5--1.7 hours for the other models, including evaluation, roughly in proportion to the size of their training sets. The learning-rate selection and the 14 main runs together used about 23 GPU hours. Each model was trained once (seed 42), so differences between models also include variation between training runs.
 
 \subsection{Evaluation}
+\label{sec:evaluation}
 % Subsequent sections will be drafted and added individually.
 % TODO: Finalize the evaluation metrics and verify the filtering prompt controls.
 % TODO: Discuss shuffled explanations as a possible future-work ablation.
+
+\paragraph{Test set.}
+The test set consists of 4,000 biographies sampled from the Bias in Bios test split, as described under Dataset Sampling. Two of them also occurred verbatim in the training data, and we removed them. All models were therefore evaluated on the same 3,998 test biographies (1,843 women and 2,155 men).
+Unlike Li et al.~\cite{li2026inheritance}, who balanced their test set with an equal number of women and men per occupation, our test set keeps the gender ratio of each occupation in Bias in Bios. Some occupation--gender groups are therefore small, the smallest being 7 male dietitians, 10 female rappers and 14 female DJs, and their TPR is sensitive to single predictions.
+
+\paragraph{Answer extraction.}
+At test time the LoRA weights were merged into the base model.
+As in the evaluation code of Li et al.~\cite{li2026inheritance}, answers were generated greedily, always choosing the most likely next token, with at most 30 new tokens. The predicted occupation was the first occupation name found in the answer, ignoring case and matching whole words only, with longer names checked first so that ``yoga teacher'' is not read as ``teacher''.
+Answers containing no occupation name were counted as incorrect.
+Unlike Li et al.'s code, we generated answers in batches of 32 biographies for speed, which can cause small numerical differences compared with generating them one at a time.
+
+\paragraph{Metrics.}
+For each model we computed accuracy, macro-F1 over the 28 occupations, the TPR per occupation and gender, the gap per occupation, and its root mean square and mean absolute value, as defined in Section~\ref{sec:background}.
 
 \section{Results}
 \subsection{Filtering Analysis}
@@ -261,11 +408,15 @@ When combining female and male test examples, no occupation had higher TPR in al
 
 These comparisons are exploratory. Time constraints allowed only one training seed (42) per configuration, and all models were evaluated on the same test set. A pattern across several configurations is therefore not evidence from independent repetitions, and we do not claim statistical significance. Changes in occupation--gender composition after filtering and the use of pool order to break score ties could also affect the results; we did not isolate their effects.
 
+\begin{acks}
+We thank Eindhoven University of Technology (TU/e) for the compute budget on Snellius, the Dutch national supercomputer operated by SURF.
+\end{acks}
+
 % References are kept here so the draft remains a standalone source file.
 % They can be moved to BibTeX when the remaining sections are added.
 \FloatBarrier
 \balance
-\begin{thebibliography}{3}
+\begin{thebibliography}{99}
 
 \bibitem{brown2020language}
 Tom B. Brown et al. 2020.
@@ -289,11 +440,41 @@ Bias in Bios: A Case Study of Semantic Representation Bias in a High-Stakes Sett
 In \emph{Proceedings of the Conference on Fairness, Accountability, and Transparency}.
 \url{https://arxiv.org/abs/1901.09451}
 
+\bibitem{grattafiori2024llama}
+Llama Team, AI @ Meta. 2024.
+The Llama 3 Herd of Models.
+\emph{arXiv preprint arXiv:2407.21783}.
+\url{https://arxiv.org/abs/2407.21783}
+
+\bibitem{hardt2016equality}
+Moritz Hardt, Eric Price, and Nathan Srebro. 2016.
+Equality of Opportunity in Supervised Learning.
+In \emph{Advances in Neural Information Processing Systems}, Vol. 29.
+\url{https://arxiv.org/abs/1610.02413}
+
+\bibitem{hu2022lora}
+Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. 2022.
+LoRA: Low-Rank Adaptation of Large Language Models.
+In \emph{International Conference on Learning Representations}.
+\url{https://arxiv.org/abs/2106.09685}
+
 \bibitem{li2026inheritance}
 Miaomiao Li, Hao Chen, Yang Wang, Tingyuan Zhu, Weijia Zhang, Kaijie Zhu, Kam-Fai Wong, and Jindong Wang. 2026.
 Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks.
 \emph{arXiv preprint arXiv:2502.04419}, version 3.
 \url{https://arxiv.org/abs/2502.04419v3}
+
+\bibitem{ravfogel2020null}
+Shauli Ravfogel, Yanai Elazar, Hila Gonen, Michael Twiton, and Yoav Goldberg. 2020.
+Null It Out: Guarding Protected Attributes by Iterative Nullspace Projection.
+In \emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics}.
+\url{https://arxiv.org/abs/2004.07667}
+
+\bibitem{romanov2019name}
+Alexey Romanov, Maria De-Arteaga, Hanna Wallach, Jennifer Chayes, Christian Borgs, Alexandra Chouldechova, Sahin Geyik, Krishnaram Kenthapadi, Anna Rumshisky, and Adam Tauman Kalai. 2019.
+What's in a Name? Reducing Bias in Bios without Access to Protected Attributes.
+In \emph{Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)}.
+\url{https://arxiv.org/abs/1904.05233}
 
 \bibitem{turpin2023unfaithful}
 Miles Turpin, Julian Michael, Ethan Perez, and Samuel R. Bowman. 2023.
