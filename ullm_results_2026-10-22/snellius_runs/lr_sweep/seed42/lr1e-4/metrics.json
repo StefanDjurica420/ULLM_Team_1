@@ -1,0 +1,272 @@
+{
+  "task": "1_original_lr1e-4",
+  "folders": [
+    "GPT-generated-data-GPT-filtering-full",
+    "GPT-generated-data-llama-filtering-full",
+    "Llama-generated-data-filtering-GPT-full",
+    "Llama-generated-data-llama-filtering-full"
+  ],
+  "n": 1598,
+  "accuracy": 0.8598247809762203,
+  "macro_f1": 0.8259773895948157,
+  "macro_f1_labels": 0.8554765820803448,
+  "unparsed": 3,
+  "tpr_gap_rms": 0.16528486280505364,
+  "tpr_gap_mean_abs": 0.11694657055143683,
+  "tpr_gap_female_minus_male": {
+    "accountant": 0.053333333333333344,
+    "architect": 0.05017921146953397,
+    "attorney": 0.1105990783410139,
+    "chiropractor": -0.32915360501567403,
+    "comedian": 0.16666666666666663,
+    "composer": 0.06060606060606055,
+    "dentist": 0.04395604395604402,
+    "dietitian": 0.1711711711711712,
+    "dj": -0.21568627450980393,
+    "filmmaker": 0.03418803418803429,
+    "interior_designer": 0.0,
+    "journalist": 0.0,
+    "model": 0.3982683982683983,
+    "nurse": 0.04166666666666663,
+    "painter": 0.1717171717171717,
+    "paralegal": 0.46078431372549017,
+    "pastor": 0.0,
+    "personal_trainer": -0.02020202020202022,
+    "photographer": -0.05949966193373901,
+    "physician": 0.1336038961038961,
+    "poet": 0.050000000000000044,
+    "professor": -0.05984153461217678,
+    "psychologist": 0.22666666666666668,
+    "rapper": 0.02777777777777779,
+    "software_engineer": -0.019607843137254832,
+    "surgeon": -0.12790697674418605,
+    "teacher": 0.10416666666666663,
+    "yoga_teacher": 0.13725490196078427
+  },
+  "tpr_per_group": {
+    "accountant_female": {
+      "tpr": 0.9333333333333333,
+      "n": 15
+    },
+    "accountant_male": {
+      "tpr": 0.88,
+      "n": 25
+    },
+    "architect_female": {
+      "tpr": 0.8888888888888888,
+      "n": 9
+    },
+    "architect_male": {
+      "tpr": 0.8387096774193549,
+      "n": 31
+    },
+    "attorney_female": {
+      "tpr": 0.967741935483871,
+      "n": 31
+    },
+    "attorney_male": {
+      "tpr": 0.8571428571428571,
+      "n": 49
+    },
+    "chiropractor_female": {
+      "tpr": 0.6363636363636364,
+      "n": 11
+    },
+    "chiropractor_male": {
+      "tpr": 0.9655172413793104,
+      "n": 29
+    },
+    "comedian_female": {
+      "tpr": 1.0,
+      "n": 9
+    },
+    "comedian_male": {
+      "tpr": 0.8333333333333334,
+      "n": 30
+    },
+    "composer_female": {
+      "tpr": 1.0,
+      "n": 7
+    },
+    "composer_male": {
+      "tpr": 0.9393939393939394,
+      "n": 33
+    },
+    "dentist_female": {
+      "tpr": 0.9285714285714286,
+      "n": 14
+    },
+    "dentist_male": {
+      "tpr": 0.8846153846153846,
+      "n": 26
+    },
+    "dietitian_female": {
+      "tpr": 0.8378378378378378,
+      "n": 37
+    },
+    "dietitian_male": {
+      "tpr": 0.6666666666666666,
+      "n": 3
+    },
+    "dj_female": {
+      "tpr": 0.6666666666666666,
+      "n": 6
+    },
+    "dj_male": {
+      "tpr": 0.8823529411764706,
+      "n": 34
+    },
+    "filmmaker_female": {
+      "tpr": 0.9230769230769231,
+      "n": 13
+    },
+    "filmmaker_male": {
+      "tpr": 0.8888888888888888,
+      "n": 27
+    },
+    "interior_designer_female": {
+      "tpr": 0.875,
+      "n": 32
+    },
+    "interior_designer_male": {
+      "tpr": 0.875,
+      "n": 8
+    },
+    "journalist_female": {
+      "tpr": 0.9,
+      "n": 40
+    },
+    "journalist_male": {
+      "tpr": 0.9,
+      "n": 40
+    },
+    "model_female": {
+      "tpr": 0.9696969696969697,
+      "n": 33
+    },
+    "model_male": {
+      "tpr": 0.5714285714285714,
+      "n": 7
+    },
+    "nurse_female": {
+      "tpr": 0.875,
+      "n": 64
+    },
+    "nurse_male": {
+      "tpr": 0.8333333333333334,
+      "n": 6
+    },
+    "painter_female": {
+      "tpr": 0.9444444444444444,
+      "n": 18
+    },
+    "painter_male": {
+      "tpr": 0.7727272727272727,
+      "n": 22
+    },
+    "paralegal_female": {
+      "tpr": 0.7941176470588235,
+      "n": 34
+    },
+    "paralegal_male": {
+      "tpr": 0.3333333333333333,
+      "n": 6
+    },
+    "pastor_female": {
+      "tpr": 0.7,
+      "n": 10
+    },
+    "pastor_male": {
+      "tpr": 0.7,
+      "n": 30
+    },
+    "personal_trainer_female": {
+      "tpr": 0.8888888888888888,
+      "n": 18
+    },
+    "personal_trainer_male": {
+      "tpr": 0.9090909090909091,
+      "n": 22
+    },
+    "photographer_female": {
+      "tpr": 0.8620689655172413,
+      "n": 29
+    },
+    "photographer_male": {
+      "tpr": 0.9215686274509803,
+      "n": 51
+    },
+    "physician_female": {
+      "tpr": 0.8961038961038961,
+      "n": 77
+    },
+    "physician_male": {
+      "tpr": 0.7625,
+      "n": 80
+    },
+    "poet_female": {
+      "tpr": 0.9,
+      "n": 20
+    },
+    "poet_male": {
+      "tpr": 0.85,
+      "n": 20
+    },
+    "professor_female": {
+      "tpr": 0.9174311926605505,
+      "n": 109
+    },
+    "professor_male": {
+      "tpr": 0.9772727272727273,
+      "n": 132
+    },
+    "psychologist_female": {
+      "tpr": 0.76,
+      "n": 25
+    },
+    "psychologist_male": {
+      "tpr": 0.5333333333333333,
+      "n": 15
+    },
+    "rapper_female": {
+      "tpr": 1.0,
+      "n": 4
+    },
+    "rapper_male": {
+      "tpr": 0.9722222222222222,
+      "n": 36
+    },
+    "software_engineer_female": {
+      "tpr": 0.8333333333333334,
+      "n": 6
+    },
+    "software_engineer_male": {
+      "tpr": 0.8529411764705882,
+      "n": 34
+    },
+    "surgeon_female": {
+      "tpr": 0.5,
+      "n": 8
+    },
+    "surgeon_male": {
+      "tpr": 0.627906976744186,
+      "n": 43
+    },
+    "teacher_female": {
+      "tpr": 0.5416666666666666,
+      "n": 24
+    },
+    "teacher_male": {
+      "tpr": 0.4375,
+      "n": 16
+    },
+    "yoga_teacher_female": {
+      "tpr": 0.9705882352941176,
+      "n": 34
+    },
+    "yoga_teacher_male": {
+      "tpr": 0.8333333333333334,
+      "n": 6
+    }
+  }
+}

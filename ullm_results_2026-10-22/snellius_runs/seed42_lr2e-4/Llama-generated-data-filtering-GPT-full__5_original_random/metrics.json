@@ -1,0 +1,270 @@
+{
+  "task": "Llama-generated-data-filtering-GPT-full__5_original_random",
+  "folders": [
+    "Llama-generated-data-filtering-GPT-full",
+    "Llama-generated-data-llama-filtering-full"
+  ],
+  "n": 3998,
+  "accuracy": 0.8481740870435217,
+  "macro_f1": 0.815703775243345,
+  "macro_f1_labels": 0.8448360529306074,
+  "unparsed": 12,
+  "tpr_gap_rms": 0.10386101419838527,
+  "tpr_gap_mean_abs": 0.07948905068274957,
+  "tpr_gap_female_minus_male": {
+    "accountant": 0.04075504075504077,
+    "architect": 0.01602564102564108,
+    "attorney": 0.0011428571428571122,
+    "chiropractor": -0.08419958419958418,
+    "comedian": -0.13984327908378535,
+    "composer": 0.008928571428571397,
+    "dentist": 0.0359133126934984,
+    "dietitian": 0.03533026113671278,
+    "dj": -0.12126245847176076,
+    "filmmaker": -0.06241519674355489,
+    "interior_designer": 0.05912930474333988,
+    "journalist": -0.024955436720142554,
+    "model": 0.12686038270729982,
+    "nurse": 0.07437457741717379,
+    "painter": 0.09822866344605474,
+    "paralegal": 0.19215686274509802,
+    "pastor": 0.06140350877192979,
+    "personal_trainer": -0.09844134536505333,
+    "photographer": -0.056993121519816614,
+    "physician": 0.18118776671408243,
+    "poet": 0.0540216086434574,
+    "professor": 0.0169472515393847,
+    "psychologist": -0.050480769230769273,
+    "rapper": -0.022222222222222254,
+    "software_engineer": 0.0,
+    "surgeon": -0.24836601307189543,
+    "teacher": -0.07601314348302302,
+    "yoga_teacher": 0.23809523809523814
+  },
+  "tpr_per_group": {
+    "accountant_female": {
+      "tpr": 0.6756756756756757,
+      "n": 37
+    },
+    "accountant_male": {
+      "tpr": 0.6349206349206349,
+      "n": 63
+    },
+    "architect_female": {
+      "tpr": 0.7083333333333334,
+      "n": 24
+    },
+    "architect_male": {
+      "tpr": 0.6923076923076923,
+      "n": 78
+    },
+    "attorney_female": {
+      "tpr": 0.8571428571428571,
+      "n": 77
+    },
+    "attorney_male": {
+      "tpr": 0.856,
+      "n": 125
+    },
+    "chiropractor_female": {
+      "tpr": 0.8076923076923077,
+      "n": 26
+    },
+    "chiropractor_male": {
+      "tpr": 0.8918918918918919,
+      "n": 74
+    },
+    "comedian_female": {
+      "tpr": 0.8095238095238095,
+      "n": 21
+    },
+    "comedian_male": {
+      "tpr": 0.9493670886075949,
+      "n": 79
+    },
+    "composer_female": {
+      "tpr": 0.9375,
+      "n": 16
+    },
+    "composer_male": {
+      "tpr": 0.9285714285714286,
+      "n": 84
+    },
+    "dentist_female": {
+      "tpr": 0.9411764705882353,
+      "n": 51
+    },
+    "dentist_male": {
+      "tpr": 0.9052631578947369,
+      "n": 95
+    },
+    "dietitian_female": {
+      "tpr": 0.8924731182795699,
+      "n": 93
+    },
+    "dietitian_male": {
+      "tpr": 0.8571428571428571,
+      "n": 7
+    },
+    "dj_female": {
+      "tpr": 0.7857142857142857,
+      "n": 14
+    },
+    "dj_male": {
+      "tpr": 0.9069767441860465,
+      "n": 86
+    },
+    "filmmaker_female": {
+      "tpr": 0.8181818181818182,
+      "n": 33
+    },
+    "filmmaker_male": {
+      "tpr": 0.8805970149253731,
+      "n": 67
+    },
+    "interior_designer_female": {
+      "tpr": 0.9012345679012346,
+      "n": 81
+    },
+    "interior_designer_male": {
+      "tpr": 0.8421052631578947,
+      "n": 19
+    },
+    "journalist_female": {
+      "tpr": 0.8181818181818182,
+      "n": 99
+    },
+    "journalist_male": {
+      "tpr": 0.8431372549019608,
+      "n": 102
+    },
+    "model_female": {
+      "tpr": 0.891566265060241,
+      "n": 83
+    },
+    "model_male": {
+      "tpr": 0.7647058823529411,
+      "n": 17
+    },
+    "nurse_female": {
+      "tpr": 0.8390804597701149,
+      "n": 174
+    },
+    "nurse_male": {
+      "tpr": 0.7647058823529411,
+      "n": 17
+    },
+    "painter_female": {
+      "tpr": 0.9130434782608695,
+      "n": 46
+    },
+    "painter_male": {
+      "tpr": 0.8148148148148148,
+      "n": 54
+    },
+    "paralegal_female": {
+      "tpr": 0.8588235294117647,
+      "n": 85
+    },
+    "paralegal_male": {
+      "tpr": 0.6666666666666666,
+      "n": 15
+    },
+    "pastor_female": {
+      "tpr": 0.9166666666666666,
+      "n": 24
+    },
+    "pastor_male": {
+      "tpr": 0.8552631578947368,
+      "n": 76
+    },
+    "personal_trainer_female": {
+      "tpr": 0.8260869565217391,
+      "n": 46
+    },
+    "personal_trainer_male": {
+      "tpr": 0.9245283018867925,
+      "n": 53
+    },
+    "photographer_female": {
+      "tpr": 0.8732394366197183,
+      "n": 71
+    },
+    "photographer_male": {
+      "tpr": 0.9302325581395349,
+      "n": 129
+    },
+    "physician_female": {
+      "tpr": 0.8851351351351351,
+      "n": 148
+    },
+    "physician_male": {
+      "tpr": 0.7039473684210527,
+      "n": 152
+    },
+    "poet_female": {
+      "tpr": 0.8775510204081632,
+      "n": 49
+    },
+    "poet_male": {
+      "tpr": 0.8235294117647058,
+      "n": 51
+    },
+    "professor_female": {
+      "tpr": 0.940959409594096,
+      "n": 271
+    },
+    "professor_male": {
+      "tpr": 0.9240121580547113,
+      "n": 329
+    },
+    "psychologist_female": {
+      "tpr": 0.71875,
+      "n": 64
+    },
+    "psychologist_male": {
+      "tpr": 0.7692307692307693,
+      "n": 39
+    },
+    "rapper_female": {
+      "tpr": 0.9,
+      "n": 10
+    },
+    "rapper_male": {
+      "tpr": 0.9222222222222223,
+      "n": 90
+    },
+    "software_engineer_female": {
+      "tpr": 0.75,
+      "n": 16
+    },
+    "software_engineer_male": {
+      "tpr": 0.75,
+      "n": 84
+    },
+    "surgeon_female": {
+      "tpr": 0.5294117647058824,
+      "n": 17
+    },
+    "surgeon_male": {
+      "tpr": 0.7777777777777778,
+      "n": 99
+    },
+    "teacher_female": {
+      "tpr": 0.5421686746987951,
+      "n": 83
+    },
+    "teacher_male": {
+      "tpr": 0.6181818181818182,
+      "n": 55
+    },
+    "yoga_teacher_female": {
+      "tpr": 0.9880952380952381,
+      "n": 84
+    },
+    "yoga_teacher_male": {
+      "tpr": 0.75,
+      "n": 16
+    }
+  }
+}

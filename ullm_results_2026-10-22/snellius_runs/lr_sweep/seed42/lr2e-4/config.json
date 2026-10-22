@@ -1,0 +1,20 @@
+{
+  "task": "1_original_lr2e-4",
+  "learning_rate": "2e-4",
+  "train_file": "/gpfs/home5/scur0430/ULLM_Team_1/traindata_joined/GPT-generated-data-GPT-filtering-full/1_original.jsonl",
+  "eval_file": "/gpfs/home5/scur0430/ULLM_Team_1/testdata_hug/dev.json",
+  "base_model": "meta-llama/Llama-3.1-8B-Instruct",
+  "seed": 42,
+  "train": {
+    "epochs": 3,
+    "learning_rate": 0.0002,
+    "batch_size": 8,
+    "grad_accum": 4,
+    "max_length": 1024,
+    "lora_r": 8,
+    "lora_alpha": 32,
+    "lora_dropout": 0.1
+  },
+  "eval_batch_size": 32,
+  "slurm_job": "28391520"
+}
