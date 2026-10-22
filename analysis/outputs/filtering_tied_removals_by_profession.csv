@@ -1,0 +1,16 @@
+profession_name,GPT/GPT CO,GPT/GPT EA,GPT/Llama CO,GPT/Llama EA,Llama/GPT CO,Llama/GPT EA,Llama/Llama CO,Llama/Llama EA
+accountant,29,24,261,373,25,26,363,207
+architect,4,5,0,362,2,5,51,0
+attorney,63,53,0,243,35,39,0,0
+chiropractor,75,67,0,0,66,69,0,0
+comedian,125,69,0,0,119,95,0,0
+composer,5,0,0,0,2,4,0,0
+dentist,82,34,0,0,41,46,0,0
+dietitian,101,0,0,0,126,127,0,0
+dj,0,0,0,0,33,29,0,0
+filmmaker,0,0,0,0,13,12,0,0
+interior_designer,0,0,0,0,56,86,0,0
+journalist,0,0,0,0,45,0,0,0
+model,0,0,0,0,112,0,0,0
+nurse,0,0,0,0,61,0,0,0
+TOTAL,484,252,261,978,736,538,414,207
