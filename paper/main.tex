@@ -1,10 +1,9 @@
 \documentclass[sigconf]{acmart}
-\usepackage{placeins}
 \usepackage{float}
 \usepackage{booktabs}
 
 \setcopyright{none}
-\settopmatter{printacmref=false}
+\settopmatter{printacmref=false, printfolios=true, authorsperrow=4}  % printfolios: page numbers; authorsperrow: all four authors in one row
 \renewcommand\footnotetextcopyrightpermission[1]{}
 \acmConference{}{}{}
 \acmBooktitle{}
@@ -16,9 +15,29 @@
 \title{Do Generator Explanations Improve Synthetic Data Filtering for Gender Bias Mitigation?}
 
 \author{Andrei Avram}
+\affiliation{%
+  \institution{TU/e}
+  \city{Eindhoven}
+  \country{The Netherlands}}
+\email{a.avram@student.tue.nl}
 \author{Mente B\"ogemann}
+\affiliation{%
+  \institution{TU/e}
+  \city{Eindhoven}
+  \country{The Netherlands}}
+\email{m.f.d.bogemann@student.tue.nl}
 \author{Stefan Durica}
+\affiliation{%
+  \institution{TU/e}
+  \city{Eindhoven}
+  \country{The Netherlands}}
+\email{s.durica@student.tue.nl}
 \author{Rudy Schmitz}
+\affiliation{%
+  \institution{TU/e}
+  \city{Eindhoven}
+  \country{The Netherlands}}
+\email{r.schmitz@student.tue.nl}
 \renewcommand{\shortauthors}{Avram et al.}
 
 \begin{document}
@@ -71,11 +90,11 @@ The bias scorer models are instructed with a few-shot prompt. In this method, th
 
 In the original Bias in Bios study, De-Arteaga et al.~\cite{dearteaga2019bios} compared three classifiers of increasing complexity: logistic regression on bag-of-words features, logistic regression on averaged word embeddings, and a deep recurrent neural network trained end-to-end.
 In contrast to these task-specific classifiers, we follow Li et al.~\cite{li2026inheritance}, who fine-tuned Llama-3.1-8B-Instruct and evaluated it on Bias in Bios occupation classification, and use this instruction-tuned LLM as the classifier.
-Just like~\cite{li2026inheritance}, we give the model only the biography, in which the person's gender is visible, and ask it to answer with one of the listed occupations (here 28).
+Just like Li et al.~\cite{li2026inheritance}, we give the model only the biography, in which the person's gender is visible, and ask it to answer with one of the listed occupations (here 28).
 Like the bias scorer models above, an instruction-tuned model~\cite{grattafiori2024llama} can already follow such a prompt and thus classify without any training. Fine-tuning then adapts it to the occupation labels and to the biographies in its training data.
 
 Why do we fine-tune the classifier with Low-Rank Adaptation (LoRA)~\cite{hu2022lora}?
-Updating all weights of an 8-billion-parameter model would need far more GPU memory than a single GPU offers, so, as in~\cite{li2026inheritance}, we train only a smaller number of parameters.
+Updating all weights of an 8-billion-parameter model would need far more GPU memory than a single GPU offers, so, as Li et al.~\cite{li2026inheritance} did, we train only a smaller number of parameters.
 LoRA freezes the pretrained weights and adds small trainable low-rank matrices to selected weight matrices, in our case the query and value projections~\cite{hu2022lora}.
 This reduced the number of trainable parameters to about 3.4 million (0.04\% of the model). Hu et al.\ report that LoRA performs on par with or better than full fine-tuning on several language models.
 
@@ -197,10 +216,6 @@ Each training example paired this prompt, filled in with a biography, with the c
 Each training set was shuffled so that original and synthetic biographies were mixed within batches, rather than seen one block after the other. A fixed random seed (42) makes this order reproducible.
 We fine-tuned with LoRA~\cite{hu2022lora} as described in Section~\ref{sec:background}, using next-token prediction with the loss computed only on the answer, so the model learned to predict the occupation rather than to reproduce the prompt or biography.
 
-\paragraph{Settings.}
-All settings are listed in Table~\ref{tab:training} and were identical for every training condition, including the learning rate selected below. Only the training data differed.
-As in Li et al.~\cite{li2026inheritance}, all models were trained for three epochs, and the LoRA and optimisation settings in Table~\ref{tab:training} follow their code. We deviated from their code in three respects. First, we trained on the full bf16 model instead of a 4-bit quantized one. Second, we used the evaluation prompt also for training, with the loss computed only on the answer, whereas their code trains on a differently formatted prompt with the loss on the whole text. Third, we used a different learning rate, selected with the test described below.
-
 \begin{table}[H]
   \centering
   \caption{Fine-tuning settings, identical for all training conditions.}
@@ -233,10 +248,14 @@ As in Li et al.~\cite{li2026inheritance}, all models were trained for three epoc
   {\footnotesize $^{a}$ Original only (12,000) / random and filtered (25,008) / full pool (27,008).}
 \end{table}
 
+\paragraph{Settings.}
+All settings are listed in Table~\ref{tab:training} and were identical for every training condition, including the learning rate selected below. Only the training data differed.
+As in Li et al.~\cite{li2026inheritance}, all models were trained for three epochs, and the LoRA and optimisation settings in Table~\ref{tab:training} follow their code. We deviated from their code in three respects. First, we trained on the full bf16 model instead of a 4-bit quantized one. Second, we used the evaluation prompt also for training, with the loss computed only on the answer, whereas their code trains on a differently formatted prompt with the loss on the whole text. Third, we used a different learning rate, selected with the test described below.
+
 \paragraph{Learning-rate selection.}
 Li et al.\ used a learning rate of $1\times10^{-5}$. Because of the differences listed above and our larger training sets (12,000 to 27,008 instead of 3,600 examples), we could not simply adopt this value, and we found no source that recommends a learning rate for a comparable setting. We therefore first ran a test and selected the learning rate from $\{1\times10^{-5}, 5\times10^{-5}, 1\times10^{-4}, 2\times10^{-4}\}$ on the development set of 1,598 biographies (the 1,600 sampled ones minus two that also occurred in the test set), evaluated as described in Section~\ref{sec:evaluation}, using the model trained on the original data only and the settings above.
 The selection criterion was macro-F1 over the 28 occupations, which weights all occupations equally. The gender gap was deliberately not used, to avoid tuning towards the outcome under study.
-Macro-F1 increased with the learning rate (0.836, 0.850, 0.856 and 0.862), and $2\times10^{-4}$ was used for all conditions. Because this is the largest value tested, a higher rate might have performed slightly better.
+Macro-F1 increased with the learning rate (83.63\%, 85.03\%, 85.55\% and 86.16\%), and $2\times10^{-4}$ was used for all conditions. Because this is the largest value tested, a higher rate might have performed slightly better.
 
 \paragraph{Training runs.}
 In total we trained 13 models (Table~\ref{tab:conditions}). The full pool and the random subset do not depend on the filter model, so each was trained only once per generator.
@@ -463,73 +482,8 @@ We thank Eindhoven University of Technology (TU/e) for the compute budget on Sne
 
 
 \balance
-\begin{thebibliography}{99}
-
-\bibitem{brown2020language}
-Tom B. Brown et al. 2020.
-Language Models are Few-Shot Learners.
-In \emph{Advances in Neural Information Processing Systems},
-Vol. 33.
-\url{https://arxiv.org/abs/2005.14165}
-
-\bibitem{chen2024alpagasus}
-Lichang Chen, Shiyang Li, Jun Yan, Hai Wang,
-Kalpa Gunaratna, Vikas Yadav, Zheng Tang,
-Vijay Srinivasan, Tianyi Zhou, Heng Huang,
-and Hongxia Jin. 2024.
-AlpaGasus: Training a Better Alpaca with Fewer Data.
-In \emph{International Conference on Learning Representations}.
-\url{https://arxiv.org/abs/2307.08701}
-
-\bibitem{dearteaga2019bios}
-Maria De-Arteaga, Alexey Romanov, Hanna Wallach, Jennifer Chayes, Christian Borgs, Alexandra Chouldechova, Sahin Geyik, Krishnaram Kenthapadi, and Adam Tauman Kalai. 2019.
-Bias in Bios: A Case Study of Semantic Representation Bias in a High-Stakes Setting.
-In \emph{Proceedings of the Conference on Fairness, Accountability, and Transparency}.
-\url{https://arxiv.org/abs/1901.09451}
-
-\bibitem{grattafiori2024llama}
-Llama Team, AI @ Meta. 2024.
-The Llama 3 Herd of Models.
-\emph{arXiv preprint arXiv:2407.21783}.
-\url{https://arxiv.org/abs/2407.21783}
-
-\bibitem{hardt2016equality}
-Moritz Hardt, Eric Price, and Nathan Srebro. 2016.
-Equality of Opportunity in Supervised Learning.
-In \emph{Advances in Neural Information Processing Systems}, Vol. 29.
-\url{https://arxiv.org/abs/1610.02413}
-
-\bibitem{hu2022lora}
-Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. 2022.
-LoRA: Low-Rank Adaptation of Large Language Models.
-In \emph{International Conference on Learning Representations}.
-\url{https://arxiv.org/abs/2106.09685}
-
-\bibitem{li2026inheritance}
-Miaomiao Li, Hao Chen, Yang Wang, Tingyuan Zhu, Weijia Zhang, Kaijie Zhu, Kam-Fai Wong, and Jindong Wang. 2026.
-Understanding and Mitigating Bias Inheritance in LLM-based Data Augmentation on Downstream Tasks.
-\emph{arXiv preprint arXiv:2502.04419}, version 3.
-\url{https://arxiv.org/abs/2502.04419v3}
-
-\bibitem{ravfogel2020null}
-Shauli Ravfogel, Yanai Elazar, Hila Gonen, Michael Twiton, and Yoav Goldberg. 2020.
-Null It Out: Guarding Protected Attributes by Iterative Nullspace Projection.
-In \emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics}.
-\url{https://arxiv.org/abs/2004.07667}
-
-\bibitem{romanov2019name}
-Alexey Romanov, Maria De-Arteaga, Hanna Wallach, Jennifer Chayes, Christian Borgs, Alexandra Chouldechova, Sahin Geyik, Krishnaram Kenthapadi, Anna Rumshisky, and Adam Tauman Kalai. 2019.
-What's in a Name? Reducing Bias in Bios without Access to Protected Attributes.
-In \emph{Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)}.
-\url{https://arxiv.org/abs/1904.05233}
-
-\bibitem{turpin2023unfaithful}
-Miles Turpin, Julian Michael, Ethan Perez, and Samuel R. Bowman. 2023.
-Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting.
-In \emph{Advances in Neural Information Processing Systems}, Vol.~36.
-\url{https://arxiv.org/abs/2305.04388}
-
-\end{thebibliography}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
 
 \clearpage
 \nobalance
