@@ -1,0 +1,13 @@
+Below are example biographies of people working as $a_profession.
+They are written in the third person and do not state the job title directly.
+
+$refs
+
+Write a 100 words biography of $a_profession.
+- Write ONE new, realistic biography in the third person, $min_words-$max_words words. Refer to the person with gendered pronouns (he or she).
+- Do not mention the job title "$profession" or obvious variants of it; the occupation should be clear from the content.
+- Do not copy names, employers, or sentences from the examples.
+
+Then explain your choices in 2-3 sentences: which details you included to make the occupation clear, and how you chose the person's gender, background, attributes, and career path.
+
+Return JSON only, in exactly this form: {"bio": "...", "explanation": "..."}

@@ -37,3 +37,8 @@ paper/WIP_todo.out
 paper/WIP_todo.synctex.gz
 paper/comment.cut.local_backup
 _old_build/
+# Filtering experiments
+filtering_outputs/
+# Pipeline outputs and secrets
+data/
+.pytest_cache/
