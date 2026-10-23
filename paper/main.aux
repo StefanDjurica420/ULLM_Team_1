@@ -23,41 +23,41 @@
 \citation{hu2022lora}
 \citation{li2026inheritance}
 \citation{dearteaga2019bios}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Theoretical Background}{2}{section.2}\protected@file@percent }
-\newlabel{sec:background}{{2}{2}{Theoretical Background}{section.2}{}}
 \citation{dearteaga2019bios}
 \citation{hardt2016equality}
 \citation{romanov2019name}
 \citation{ravfogel2020null}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Theoretical Background}{2}{section.2}\protected@file@percent }
+\newlabel{sec:background}{{2}{2}{Theoretical Background}{section.2}{}}
 \citation{romanov2019name}
 \citation{ravfogel2020null}
 \citation{li2026inheritance}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{3}{section.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dataset Sampling}{3}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Synthetic Data Generation}{3}{subsection.3.2}\protected@file@percent }
+\citation{grattafiori2024llama}
+\citation{li2026inheritance}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Synthetic data generation per generator model.}}{4}{table.caption.3}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{tab:generation}{{1}{4}{Synthetic data generation per generator model}{table.caption.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Synthetic Data Filtering}{4}{subsection.3.3}\protected@file@percent }
 \newlabel{sec:filtering}{{3.3}{4}{Synthetic Data Filtering}{subsection.3.3}{}}
-\citation{grattafiori2024llama}
-\citation{li2026inheritance}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Model Training}{4}{subsection.3.4}\protected@file@percent }
+\newlabel{sec:training}{{3.4}{4}{Model Training}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Classifier.}{4}{section*.4}\protected@file@percent }
 \citation{hu2022lora}
 \citation{li2026inheritance}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Model Training}{5}{subsection.3.4}\protected@file@percent }
-\newlabel{sec:training}{{3.4}{5}{Model Training}{subsection.3.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{Classifier.}{5}{section*.4}\protected@file@percent }
+\citation{li2026inheritance}
 \@writefile{toc}{\contentsline {paragraph}{Training procedure.}{5}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Settings.}{5}{section*.6}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Fine-tuning settings, identical for all training conditions.}}{5}{table.caption.7}\protected@file@percent }
-\newlabel{tab:training}{{2}{5}{Fine-tuning settings, identical for all training conditions}{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Fine-tuning settings, identical for all training conditions.}}{5}{table.caption.6}\protected@file@percent }
+\newlabel{tab:training}{{2}{5}{Fine-tuning settings, identical for all training conditions}{table.caption.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Settings.}{5}{section*.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Learning-rate selection.}{5}{section*.8}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Training runs.}{5}{section*.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once.}}{5}{table.caption.10}\protected@file@percent }
+\newlabel{tab:conditions}{{3}{5}{Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{5}{section*.11}\protected@file@percent }
 \citation{li2026inheritance}
-\citation{li2026inheritance}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once.}}{6}{table.caption.10}\protected@file@percent }
-\newlabel{tab:conditions}{{3}{6}{Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {paragraph}{Implementation.}{6}{section*.11}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Evaluation}{6}{subsection.3.5}\protected@file@percent }
 \newlabel{sec:evaluation}{{3.5}{6}{Evaluation}{subsection.3.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{Test set.}{6}{section*.12}\protected@file@percent }
@@ -73,34 +73,38 @@
 \newlabel{tab:tied-removals-profession}{{4}{7}{Number of biographies that were removed at the cutoff score across all eight configurations. Only professions with at least one such removal are shown}{table.caption.17}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Downstream Classification Performance and Gender Bias}{7}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:downstream-results}{{4.2}{7}{Downstream Classification Performance and Gender Bias}{subsection.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{7}{table.caption.19}\protected@file@percent }
+\newlabel{tab:explanation-pairs}{{6}{7}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{7}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:occupation-results}{{4.3}{7}{Occupation-Level Analysis}{subsection.4.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points.}}{8}{table.caption.18}\protected@file@percent }
 \newlabel{tab:downstream-all}{{5}{8}{Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points}{table.caption.18}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{8}{table.caption.19}\protected@file@percent }
-\newlabel{tab:explanation-pairs}{{6}{8}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.19}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{8}{subsection.4.3}\protected@file@percent }
-\newlabel{sec:occupation-results}{{4.3}{8}{Occupation-Level Analysis}{subsection.4.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}}{8}{table.caption.20}\protected@file@percent }
 \newlabel{tab:occupation-changes}{{7}{8}{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations}{table.caption.20}{}}
-\bibcite{brown2020language}{{1}{}{{}}{{}}}
-\bibcite{chen2024alpagasus}{{2}{}{{}}{{}}}
-\bibcite{dearteaga2019bios}{{3}{}{{}}{{}}}
-\bibcite{grattafiori2024llama}{{4}{}{{}}{{}}}
-\bibcite{hardt2016equality}{{5}{}{{}}{{}}}
-\bibcite{hu2022lora}{{6}{}{{}}{{}}}
-\bibcite{li2026inheritance}{{7}{}{{}}{{}}}
-\bibcite{ravfogel2020null}{{8}{}{{}}{{}}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{9}{table.caption.21}\protected@file@percent }
-\newlabel{tab:occupation-examples}{{8}{9}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.21}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{9}{section.5}\protected@file@percent }
-\newlabel{sec:conclusion}{{5}{9}{Conclusion}{section.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{8}{table.caption.21}\protected@file@percent }
+\newlabel{tab:occupation-examples}{{8}{8}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{8}{section.5}\protected@file@percent }
+\newlabel{sec:conclusion}{{5}{8}{Conclusion}{section.5}{}}
+\bibstyle{ACM-Reference-Format}
+\bibdata{references}
+\bibcite{brown2020language}{{1}{2020}{{Brown et~al\mbox  {.}}}{{}}}
+\bibcite{chen2024alpagasus}{{2}{2024}{{Chen et~al\mbox  {.}}}{{}}}
+\bibcite{dearteaga2019bios}{{3}{2019}{{De-Arteaga et~al\mbox  {.}}}{{}}}
+\bibcite{hardt2016equality}{{4}{2016}{{Hardt et~al\mbox  {.}}}{{}}}
+\bibcite{hu2022lora}{{5}{2022}{{Hu et~al\mbox  {.}}}{{}}}
+\bibcite{li2026inheritance}{{6}{2026}{{Li et~al\mbox  {.}}}{{}}}
+\bibcite{grattafiori2024llama}{{7}{2024}{{Llama Team, AI @ Meta}}{{}}}
+\bibcite{ravfogel2020null}{{8}{2020}{{Ravfogel et~al\mbox  {.}}}{{}}}
+\bibcite{romanov2019name}{{9}{2019}{{Romanov et~al\mbox  {.}}}{{}}}
+\bibcite{turpin2023unfaithful}{{10}{2023}{{Turpin et~al\mbox  {.}}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Limitations}{9}{section.6}\protected@file@percent }
+\newlabel{sec:limitations}{{6}{9}{Limitations}{section.6}{}}
 \@writefile{toc}{\contentsline {section}{Acknowledgments}{9}{section*.23}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{References}{9}{section*.25}\protected@file@percent }
-\bibcite{romanov2019name}{{9}{}{{}}{{}}}
-\bibcite{turpin2023unfaithful}{{10}{}{{}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Occupation and Gender Composition after Filtering}{11}{appendix.A}\protected@file@percent }
-\newlabel{app:filtering-distributions}{{A}{11}{Occupation and Gender Composition after Filtering}{appendix.A}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion.}}{11}{figure.caption.26}\protected@file@percent }
-\newlabel{fig:filtering-distributions}{{3}{11}{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion}{figure.caption.26}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Occupation and Gender Composition after Filtering}{10}{appendix.A}\protected@file@percent }
+\newlabel{app:filtering-distributions}{{A}{10}{Occupation and Gender Composition after Filtering}{appendix.A}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion.}}{10}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:filtering-distributions}{{3}{10}{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion}{figure.caption.26}{}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
 \newlabel{tocindent1}{6.25499pt}
@@ -108,10 +112,9 @@
 \newlabel{tocindent3}{0pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
-\providecommand\NAT@force@numbers{}\NAT@force@numbers
-\@writefile{toc}{\contentsline {section}{\numberline {B}Occupation-Level TPR Gender Gaps}{12}{appendix.B}\protected@file@percent }
-\newlabel{app:downstream-tpr-gaps}{{B}{12}{Occupation-Level TPR Gender Gaps}{appendix.B}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{12}{figure.caption.27}\protected@file@percent }
-\newlabel{fig:downstream-tpr-gaps}{{4}{12}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.27}{}}
-\newlabel{TotPages}{{12}{12}{}{page.12}{}}
-\gdef \@abspage@last{12}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Occupation-Level TPR Gender Gaps}{11}{appendix.B}\protected@file@percent }
+\newlabel{app:downstream-tpr-gaps}{{B}{11}{Occupation-Level TPR Gender Gaps}{appendix.B}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{11}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:downstream-tpr-gaps}{{4}{11}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.27}{}}
+\newlabel{TotPages}{{11}{11}{}{page.11}{}}
+\gdef \@abspage@last{11}
