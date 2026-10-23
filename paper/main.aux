@@ -68,39 +68,47 @@
 \newlabel{fig:filtering-scores}{{1}{6}{Gender bias score distributions across all filtering configurations}{figure.caption.15}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Composition of the 2,000 biography removals across all filtering configurations.}}{6}{figure.caption.16}\protected@file@percent }
 \newlabel{fig:filtering-removals}{{2}{6}{Composition of the 2,000 biography removals across all filtering configurations}{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Downstream Classification Performance and Gender Bias}{6}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:downstream-results}{{4.2}{6}{Downstream Classification Performance and Gender Bias}{subsection.4.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points.}}{7}{table.caption.17}\protected@file@percent }
-\newlabel{tab:downstream-all}{{4}{7}{Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points}{table.caption.17}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{7}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:downstream-tpr-gaps}{{3}{7}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Number of biographies that were removed at the cutoff score across all eight configurations. Only professions with at least one such removal are shown. }}{6}{table.caption.17}\protected@file@percent }
+\newlabel{tab:tied-removals-profession}{{4}{6}{Number of biographies that were removed at the cutoff score across all eight configurations. Only professions with at least one such removal are shown}{table.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points.}}{7}{table.caption.18}\protected@file@percent }
+\newlabel{tab:downstream-all}{{5}{7}{Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Downstream Classification Performance and Gender Bias}{7}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:downstream-results}{{4.2}{7}{Downstream Classification Performance and Gender Bias}{subsection.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{7}{table.caption.19}\protected@file@percent }
+\newlabel{tab:explanation-pairs}{{6}{7}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.19}{}}
 \bibcite{brown2020language}{{1}{}{{}}{{}}}
 \bibcite{chen2024alpagasus}{{2}{}{{}}{{}}}
 \bibcite{dearteaga2019bios}{{3}{}{{}}{{}}}
 \bibcite{grattafiori2024llama}{{4}{}{{}}{{}}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{8}{table.caption.19}\protected@file@percent }
-\newlabel{tab:explanation-pairs}{{5}{8}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.19}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{8}{subsection.4.3}\protected@file@percent }
-\newlabel{sec:occupation-results}{{4.3}{8}{Occupation-Level Analysis}{subsection.4.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}}{8}{table.caption.20}\protected@file@percent }
-\newlabel{tab:occupation-changes}{{6}{8}{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations}{table.caption.20}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{8}{table.caption.21}\protected@file@percent }
-\newlabel{tab:occupation-examples}{{7}{8}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.21}{}}
-\@writefile{toc}{\contentsline {section}{Acknowledgments}{8}{section*.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{References}{8}{section*.25}\protected@file@percent }
 \bibcite{hardt2016equality}{{5}{}{{}}{{}}}
 \bibcite{hu2022lora}{{6}{}{{}}{{}}}
 \bibcite{li2026inheritance}{{7}{}{{}}{{}}}
 \bibcite{ravfogel2020null}{{8}{}{{}}{{}}}
 \bibcite{romanov2019name}{{9}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{8}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:occupation-results}{{4.3}{8}{Occupation-Level Analysis}{subsection.4.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}}{8}{table.caption.20}\protected@file@percent }
+\newlabel{tab:occupation-changes}{{7}{8}{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations}{table.caption.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{8}{table.caption.21}\protected@file@percent }
+\newlabel{tab:occupation-examples}{{8}{8}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {section}{Acknowledgments}{8}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{8}{section*.25}\protected@file@percent }
 \bibcite{turpin2023unfaithful}{{10}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Occupation and Gender Composition after Filtering}{10}{appendix.A}\protected@file@percent }
+\newlabel{app:filtering-distributions}{{A}{10}{Occupation and Gender Composition after Filtering}{appendix.A}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion.}}{10}{figure.caption.26}\protected@file@percent }
+\newlabel{fig:filtering-distributions}{{3}{10}{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering. Grey cells indicate an undefined gender proportion}{figure.caption.26}{}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
-\newlabel{tocindent1}{4.185pt}
+\newlabel{tocindent1}{6.25499pt}
 \newlabel{tocindent2}{10.34999pt}
 \newlabel{tocindent3}{0pt}
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\newlabel{TotPages}{{9}{9}{}{page.9}{}}
-\gdef \@abspage@last{9}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Occupation-Level TPR Gender Gaps}{11}{appendix.B}\protected@file@percent }
+\newlabel{app:downstream-tpr-gaps}{{B}{11}{Occupation-Level TPR Gender Gaps}{appendix.B}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{11}{figure.caption.27}\protected@file@percent }
+\newlabel{fig:downstream-tpr-gaps}{{4}{11}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.27}{}}
+\newlabel{TotPages}{{11}{11}{}{page.11}{}}
+\gdef \@abspage@last{11}

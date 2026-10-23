@@ -1,8 +1,8 @@
 \documentclass[sigconf]{acmart}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage{booktabs}
 
-% Course manuscript: omit publication metadata that has not been assigned.
 \setcopyright{none}
 \settopmatter{printacmref=false}
 \renewcommand\footnotetextcopyrightpermission[1]{}
@@ -15,7 +15,6 @@
 
 \title{Do Generator Explanations Improve Synthetic Data Filtering for Gender Bias Mitigation?}
 
-% Add confirmed affiliations and email addresses before submission.
 \author{Andrei Avram}
 \author{Mente B\"ogemann}
 \author{Stefan Durica}
@@ -26,7 +25,6 @@
 
 \begin{abstract}
 Large language models (LLMs) can generate additional training examples for downstream tasks. However, biases in these examples may be passed on to models trained on them, potentially increasing differences in performance between demographic groups. This work investigates whether access to generator-provided explanations helps an LLM filter select synthetic data that reduces gender bias in occupation classification. Using Bias in Bios with all 28 occupations, we compare two filtering approaches: content-only filtering, which assesses synthetic biographies, occupation labels, and gender annotations, and explanation-aware filtering, which also receives the generator's explanation. We use GPT-4o-mini and Llama-3.1-8B-Instruct for both generation and filtering, with each filtering configuration removing 2,000 examples from its generator's pool. Our experimental design compares five types of training conditions: original data only, original data augmented with the full synthetic pool, and original data augmented with randomly selected, content-only filtered, or explanation-aware filtered subsets. Generator explanations are used only during filtering and are excluded from downstream training. We investigate their usefulness for data selection without assuming that they faithfully describe the generator's internal reasoning.
-% TODO: Add the main results and their implications after evaluation.
 \end{abstract}
 
 
@@ -273,9 +271,6 @@ During this project, Eindhoven University of Technology (TU/e)\footnote{\url{htt
 
 \subsection{Evaluation}
 \label{sec:evaluation}
-% Subsequent sections will be drafted and added individually.
-% TODO: Finalize the evaluation metrics and verify the filtering prompt controls.
-% TODO: Discuss shuffled explanations as a possible future-work ablation.
 
 \paragraph{Test set.}
 The test set consists of 4,000 biographies sampled from the Bias in Bios test split, as described under Dataset Sampling. Two of them also occurred verbatim in the training data, and we removed them. All models were therefore evaluated on the same 3,998 test biographies (1,843 women and 2,155 men).
@@ -323,28 +318,13 @@ For GPT-4o-mini and Llama-3.1-8B filtering the cutoff scores are 2.0 and 2.5, re
 The number of biographies removed by pool order ranged from 207 (10.4\%) to 978 (48.9\%).
 The explanation-aware scoring mode resulted in less biograhies that were removed by synthetic pool order in all configurations, except for Llama-3.1-8B filtering on GPT-4o-mini generated synthetic data.
 
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=0.65\textwidth]{figures/filtering_distribution_heatmaps.png}
-    \caption{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering.
-    Grey cells indicate an undefined gender proportion.}
-    \Description{}
-    \label{fig:filtering-distributions}
-\end{figure*}
-
-\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(a) shows the change in profession share after filtering for each of the eight runs. All biographies for the professions accountant and architect were removed in the GPT/Llama EA configuration, as were accountants in the Llama/Llama CO configuration.
-The share of professors increased substantially across all eight runs, while that of models decreased. The share of nurse biographies decreased sharply for four out of the eight runs and remained almost unchanged for the others.  Several other professions showed smaller but consistent increases or decreases in their share across all eight of the configurations.
-
-\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(b) shows the change in female proportion within professions for each of the eight runs. Apart from the three undefined gender proportions, most instances showed a decrease or no change in female proportion. Only three instances had more than 1 pp increase. The largest decreases were for model biographies in Llama/GPT CO,
-and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1 and 30 pp.
 
 \begin{table}[t]
     \centering
     \caption{Number of biographies that were removed at the cutoff score across all eight configurations. Only professions with at least one such removal are shown. }
     \label{tab:tied-removals-profession}
 
-    \resizebox{\columnwidth}{!}{%
-        \begin{tabular}{lrrrrrrrr}
+    \resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrrrrr}
             \toprule
             & \multicolumn{2}{c}{GPT/GPT}
             & \multicolumn{2}{c}{GPT/Llama}
@@ -373,9 +353,18 @@ and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1
             \midrule
             \textbf{Total}     & 484 & 252 & 261 & 978 & 736 & 538 & 414 & 207 \\
             \bottomrule
-        \end{tabular}%
-    }
+        \end{tabular}}
 \end{table}
+
+\input{generated/downstream_all}
+
+\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(a) in Appendix~\ref{app:filtering-distributions} shows the change in profession share after filtering for each of the eight runs. All biographies for the professions accountant and architect were removed in the GPT/Llama EA configuration, as were accountants in the Llama/Llama CO configuration.
+The share of professors increased substantially across all eight runs, while that of models decreased. The share of nurse biographies decreased sharply for four out of the eight runs and remained almost unchanged for the others.  Several other professions showed smaller but consistent increases or decreases in their share across all eight of the configurations.
+
+\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(b) shows the change in female proportion within professions for each of the eight runs. Apart from the three undefined gender proportions, most instances showed a decrease or no change in female proportion. Only three instances had more than 1 pp increase. The largest decreases were for model biographies in Llama/GPT CO,
+and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1 and 30 pp.
+
+
 
 \hyperref[tab:tied-removals-profession]{Table~\ref*{tab:tied-removals-profession}} shows that removals selected at the cutoff score come mostly from professions early in the alphabet, especially when Llama was used for scoring the biographies. For example in the GPT/Llama CO run, all 261 biographies removed at the cutoff score were accountant biographies. Ties were resolved using the original synthetic pool order, which was ordered alphabetically by profession.
 
@@ -384,15 +373,8 @@ and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1
 
 \hyperref[tab:downstream-all]{Table~\ref*{tab:downstream-all}} summarizes the 14 models evaluated on the same 3,998 test biographies. GPT and Llama refer to GPT-4o-mini and Llama-3.1-8B-Instruct, respectively. Macro F1 is averaged over the 28 occupations, and responses that could not be parsed are counted as errors. We summarize gender differences using the root mean square (RMS) and mean absolute (MA) TPR gaps across occupations; lower values indicate smaller disparities. Shared baselines appear only once.
 
-\input{generated/downstream_all}
 
-\begin{figure*}[!t]
-    \centering
-    \includegraphics[width=\textwidth]{figures/downstream_tpr_gaps.png}
-    \caption{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}
-    \Description{Heatmap of signed gender TPR gaps across occupations and model configurations. Red indicates higher female TPR and blue indicates higher male TPR. Each occupation is labeled with its female and male test support.}
-    \label{fig:downstream-tpr-gaps}
-\end{figure*}
+
 
 Fine-tuning on the original data increased accuracy from 71.21\% to 85.29\% and macro F1 from 73.29\% to 84.94\%, while reducing the RMS TPR gap from 12.60 to 9.72 percentage points. Adding the full GPT or Llama pool reduced the gap further, to 7.16 and 7.31 points, but macro F1 fell slightly to 84.32\% and 84.02\%. Using all synthetic examples therefore gave smaller gender gaps at a small cost in classification performance compared with training on the original data alone.
 
@@ -409,11 +391,11 @@ Using the same model family for generation and filtering offered no consistent a
 \subsection{Occupation-Level Analysis}
 \label{sec:occupation-results}
 
-\hyperref[fig:downstream-tpr-gaps]{Figure~\ref*{fig:downstream-tpr-gaps}} shows how the TPR gaps vary by occupation. Positive values mean higher TPR for female biographies, and negative values mean higher TPR for male biographies. Some groups are small: there are only seven male dietitian biographies, so one additional correct prediction changes their TPR by about 14.3 percentage points.
+\hyperref[fig:downstream-tpr-gaps]{Figure~\ref*{fig:downstream-tpr-gaps}} in Appendix~\ref{app:downstream-tpr-gaps} shows how the TPR gaps vary by occupation. Positive values mean higher TPR for female biographies, and negative values mean higher TPR for male biographies. Some groups are small: there are only seven male dietitian biographies, so one additional correct prediction changes their TPR by about 14.3 percentage points.
 
 Adding explanations reduced the absolute gap in 15 of the 28 occupations for GPT/GPT, Llama/GPT, and Llama/Llama, and in 13 occupations for GPT/Llama (\hyperref[tab:occupation-changes]{Table~\ref*{tab:occupation-changes}}). Even though more occupations improved than worsened for Llama/Llama, its overall RMS gap increased. This is possible because RMS squares the gaps before averaging, giving more weight to large differences.
 
-\begin{table}[!htbp]
+\begin{table}[H]
     \centering
     \caption{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}
     \label{tab:occupation-changes}
@@ -432,7 +414,7 @@ Adding explanations reduced the absolute gap in 15 of the 28 occupations for GPT
 
 Surgeon is one example of this effect (\hyperref[tab:occupation-examples]{Table~\ref*{tab:occupation-examples}}). For Llama/Llama, adding explanations reduced female TPR from 47.1\% to 29.4\%, while male TPR changed little, from 77.8\% to 76.8\%. The absolute gap grew from 30.7 to 47.4 percentage points, contributing to the higher overall RMS gap. However, there are only 17 female surgeon biographies. The drop represents just three fewer correct predictions, from eight to five, which limits what we can conclude from it.
 
-\begin{table}[!htbp]
+\begin{table}[H]
     \centering
     \caption{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}
     \label{tab:occupation-examples}
@@ -469,9 +451,7 @@ These comparisons are exploratory. Time constraints allowed only one training se
 We thank Eindhoven University of Technology (TU/e) for the compute budget on Snellius, the Dutch national supercomputer operated by SURF.
 \end{acks}
 
-% References are kept here so the draft remains a standalone source file.
-% They can be moved to BibTeX when the remaining sections are added.
-\FloatBarrier
+
 \balance
 \begin{thebibliography}{99}
 
@@ -540,5 +520,37 @@ In \emph{Advances in Neural Information Processing Systems}, Vol.~36.
 \url{https://arxiv.org/abs/2305.04388}
 
 \end{thebibliography}
+
+\clearpage
+\nobalance
+\onecolumn
+\appendix
+\section{Occupation and Gender Composition after Filtering}
+\label{app:filtering-distributions}
+
+The detailed heatmaps below supplement the filtering analysis. GPT and Llama denote GPT-4o-mini and Llama-3.1-8B-Instruct; configurations list generator/filter. CO and EA denote content-only and explanation-aware filtering.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/filtering_distribution_heatmaps.png}
+    \caption{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering.
+    Grey cells indicate an undefined gender proportion.}
+    \Description{Two heatmaps showing changes in occupation share and female proportion within occupations for eight filtering configurations. Circles mark occupations with no retained biographies; grey cells mark undefined gender proportions.}
+    \label{fig:filtering-distributions}
+\end{figure}
+
+\clearpage
+\section{Occupation-Level TPR Gender Gaps}
+\label{app:downstream-tpr-gaps}
+
+The heatmap below provides the occupation-level results discussed in Section~\ref{sec:occupation-results}, including the female and male test support for each occupation.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{figures/downstream_tpr_gaps.png}
+    \caption{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}
+    \Description{Heatmap of signed gender TPR gaps across occupations and model configurations. Red indicates higher female TPR and blue indicates higher male TPR. Each occupation is labeled with its female and male test support.}
+    \label{fig:downstream-tpr-gaps}
+\end{figure}
 
 \end{document}

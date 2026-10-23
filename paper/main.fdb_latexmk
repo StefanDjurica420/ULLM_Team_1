@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1792744277.7469 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792744280.27299 0
+["pdflatex"] 1792748226.28855 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792748230.72067 0
   "c:/Users/Stefan" 1762904539 12700 13a2374d6486bd45860f3dfcd2a1bab4 ""
-  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792744272 50004 c1b97839473d3e2ae498f7d7c9d48968 ""
+  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792748225 54787 0b6cef1df5da7a6b09fb75a13e582fec ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc" 1792154935 7693 0f2dce6d313c82989ec3a67fc24df2a0 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc" 1792155097 2921 8ca0eb0831f9bc5da080d3697cfe67bf ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc" 1792155097 2933 9ad527ce78d7c5fa0a642dead095f172 ""
@@ -202,15 +202,16 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1792156453 5678096 2c823c228609a3b902dd142302655070 ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1792156523 3668391 e899e91ade3399a756ba67454c2282d1 ""
   "c:/texlive/2026/texmf.cnf" 1792156436 713 e69b156964470283e0530f5060668171 ""
-  "comment.cut" 1792744279 138 40f407066d61aa690f6c2085b72d221b "pdflatex"
+  "comment.cut" 1792748229 138 40f407066d61aa690f6c2085b72d221b "pdflatex"
   "figures/downstream_tpr_gaps.png" 1792675547 180830 12f6ecbb911e7983c11d978895ca3d49 ""
+  "figures/filtering_distribution_heatmaps.png" 1792746113 402277 30541cab653299697346b130f2207f33 ""
   "figures/filtering_removal_composition.png" 1792670481 227453 1e2e8fd8913748e50affce495afec1ab ""
   "figures/filtering_score_distributions.png" 1792670481 316392 4da3e010de1636a0fc96780863a8fde6 ""
   "generated/downstream_all.tex" 1792675547 1315 1d5d8dbd31b56220384ebd987689d107 ""
-  "generated/explanation_pairs.tex" 1792675547 782 5aa5b8a83fc716e34119c80f4abbaf7c ""
-  "main.aux" 1792744280 9138 de1b2c24706a6c5b1bcf014643c612b1 "pdflatex"
-  "main.out" 1792744280 2396 b4445e4321b1439777fa24f78ae0cedf "pdflatex"
-  "main.tex" 1792744272 50004 c1b97839473d3e2ae498f7d7c9d48968 ""
+  "generated/explanation_pairs.tex" 1792748023 778 61f75d97178b8d256776a7d710d2af76 ""
+  "main.aux" 1792748230 11047 735323f29b76921e5a913e4ea6689a23 "pdflatex"
+  "main.out" 1792748230 2941 ec76b32eee806e12ce6e37d67165e5ab "pdflatex"
+  "main.tex" 1792748225 54787 0b6cef1df5da7a6b09fb75a13e582fec ""
   (generated)
   "comment.cut"
   "main.aux"

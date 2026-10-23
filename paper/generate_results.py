@@ -109,7 +109,7 @@ def main():
     lines += [r'\bottomrule', r'\end{tabular}', r'\end{table*}']
     (out/'downstream_all.tex').write_text('\n'.join(lines)+'\n', encoding='utf-8')
 
-    lines = [r'\begin{table}[!htbp]', r'\centering', r'\small', r'\setlength{\tabcolsep}{3pt}',
+    lines = [r'\begin{table}[H]', r'\centering', r'\small', r'\setlength{\tabcolsep}{3pt}',
         r'\caption{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta$) are EA minus CO, in percentage points.}',
         r'\label{tab:explanation-pairs}', r'\begin{tabular}{@{}lrrrrrr@{}}', r'\toprule',
         r' & \multicolumn{3}{c}{Macro F1} & \multicolumn{3}{c}{RMS TPR gap} \\', r'\cmidrule(lr){2-4}\cmidrule(l){5-7}', r'Gen./filter & CO & EA & $\Delta$ & CO & EA & $\Delta$ \\', r'\midrule']
