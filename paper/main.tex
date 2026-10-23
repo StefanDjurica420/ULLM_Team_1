@@ -1,5 +1,6 @@
 \documentclass[sigconf]{acmart}
 \usepackage{placeins}
+\usepackage{booktabs}
 
 % Course manuscript: omit publication metadata that has not been assigned.
 \setcopyright{none}
@@ -291,7 +292,7 @@ For each model we computed accuracy, macro-F1 over the 28 occupations, the TPR p
 
 \section{Results}
 \subsection{Filtering Analysis}
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/filtering_score_distributions.png}
     \caption{Gender bias score distributions across all filtering configurations.}
@@ -299,7 +300,7 @@ For each model we computed accuracy, macro-F1 over the 28 occupations, the TPR p
     \label{fig:filtering-scores}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\linewidth]{figures/filtering_removal_composition.png}
     \caption{Composition of the 2,000 biography removals across all filtering configurations.}
@@ -311,7 +312,7 @@ For each model we computed accuracy, macro-F1 over the 28 occupations, the TPR p
 It is apparent that GPT-4o-mini gave 1.0 as the dominant score, assigned to 73.2-77.6\% of the biographies during the four runs, while for Llama-3.1-8B that was 2.5, assigned to 88.0-93.2\% of the biographies.
 This difference is consistent across generator model and scoring mode.
 
-For all configurations, the scores are concentrated at a few values, event hough all decimal scores between 1.0 and 5.0 were allowed by the few-shot prompt.
+For all configurations, the scores are concentrated at a few values, even though all decimal scores between 1.0 and 5.0 were allowed by the few-shot prompt.
 For GPT-4o-mini as scorer model, they were mostly concentrated at 1.0, 2.0, 3.0 and 4.0, while for Llama-3.1-8B that was 2.5, 2.7, 3.5 and 4.5.
 The distributions were similar between scoring modes, and there was no consistent shift towards higher or lower scores.
 
@@ -321,6 +322,62 @@ For GPT-4o-mini and Llama-3.1-8B filtering the cutoff scores are 2.0 and 2.5, re
 \hyperref[fig:filtering-removals]{Figure~\ref*{fig:filtering-removals}} shows how the 2,000 biographies that were removed in each run were divided between biographies scoring above the cutoff value, and scoring at the cutoff value that were removed by pool order.
 The number of biographies removed by pool order ranged from 207 (10.4\%) to 978 (48.9\%).
 The explanation-aware scoring mode resulted in less biograhies that were removed by synthetic pool order in all configurations, except for Llama-3.1-8B filtering on GPT-4o-mini generated synthetic data.
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.65\textwidth]{figures/filtering_distribution_heatmaps.png}
+    \caption{Changes in profession share (left) and female proportion within professions (right) after filtering. The changes are shown as the percentage after filtering minus the percentage before filtering, expressed in percentage points (pp). The circles indicate the professions which retained no biographies after filtering.
+    Grey cells indicate an undefined gender proportion.}
+    \Description{}
+    \label{fig:filtering-distributions}
+\end{figure*}
+
+\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(a) shows the change in profession share after filtering for each of the eight runs. All biographies for the professions accountant and architect were removed in the GPT/Llama EA configuration, as were accountants in the Llama/Llama CO configuration.
+The share of professors increased substantially across all eight runs, while that of models decreased. The share of nurse biographies decreased sharply for four out of the eight runs and remained almost unchanged for the others.  Several other professions showed smaller but consistent increases or decreases in their share across all eight of the configurations.
+
+\hyperref[fig:filtering-distributions]{Figure~\ref*{fig:filtering-distributions}}(b) shows the change in female proportion within professions for each of the eight runs. Apart from the three undefined gender proportions, most instances showed a decrease or no change in female proportion. Only three instances had more than 1 pp increase. The largest decreases were for model biographies in Llama/GPT CO,
+and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1 and 30 pp.
+
+\begin{table}[t]
+    \centering
+    \caption{Number of biographies that were removed at the cutoff score across all eight configurations. Only professions with at least one such removal are shown. }
+    \label{tab:tied-removals-profession}
+
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{lrrrrrrrr}
+            \toprule
+            & \multicolumn{2}{c}{GPT/GPT}
+            & \multicolumn{2}{c}{GPT/Llama}
+            & \multicolumn{2}{c}{Llama/GPT}
+            & \multicolumn{2}{c}{Llama/Llama} \\
+            \cmidrule(lr){2-3}
+            \cmidrule(lr){4-5}
+            \cmidrule(lr){6-7}
+            \cmidrule(lr){8-9}
+            Profession & CO & EA & CO & EA & CO & EA & CO & EA \\
+            \midrule
+            Accountant        & 29  & 24 & 261 & 373 & 25  & 26  & 363 & 207 \\
+            Architect         & 4   & 5  & 0   & 362 & 2   & 5   & 51  & 0   \\
+            Attorney          & 63  & 53 & 0   & 243 & 35  & 39  & 0   & 0   \\
+            Chiropractor      & 75  & 67 & 0   & 0   & 66  & 69  & 0   & 0   \\
+            Comedian          & 125 & 69 & 0   & 0   & 119 & 95  & 0   & 0   \\
+            Composer          & 5   & 0  & 0   & 0   & 2   & 4   & 0   & 0   \\
+            Dentist           & 82  & 34 & 0   & 0   & 41  & 46  & 0   & 0   \\
+            Dietitian         & 101 & 0  & 0   & 0   & 126 & 127 & 0   & 0   \\
+            DJ                & 0   & 0  & 0   & 0   & 33  & 29  & 0   & 0   \\
+            Filmmaker         & 0   & 0  & 0   & 0   & 13  & 12  & 0   & 0   \\
+            Interior designer & 0   & 0  & 0   & 0   & 56  & 86  & 0   & 0   \\
+            Journalist        & 0   & 0  & 0   & 0   & 45  & 0   & 0   & 0   \\
+            Model             & 0   & 0  & 0   & 0   & 112 & 0   & 0   & 0   \\
+            Nurse             & 0   & 0  & 0   & 0   & 61  & 0   & 0   & 0   \\
+            \midrule
+            \textbf{Total}     & 484 & 252 & 261 & 978 & 736 & 538 & 414 & 207 \\
+            \bottomrule
+        \end{tabular}%
+    }
+\end{table}
+
+\hyperref[tab:tied-removals-profession]{Table~\ref*{tab:tied-removals-profession}} shows that removals selected at the cutoff score come mostly from professions early in the alphabet, especially when Llama was used for scoring the biographies. For example in the GPT/Llama CO run, all 261 biographies removed at the cutoff score were accountant biographies. Ties were resolved using the original synthetic pool order, which was ordered alphabetically by profession.
 
 \subsection{Downstream Classification Performance and Gender Bias}
 \label{sec:downstream-results}
