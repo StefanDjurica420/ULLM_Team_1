@@ -368,6 +368,8 @@ and yoga teacher biographies GPT/GPT CO and EA. Most decreases were in between 1
 
 \hyperref[tab:tied-removals-profession]{Table~\ref*{tab:tied-removals-profession}} shows that removals selected at the cutoff score come mostly from professions early in the alphabet, especially when Llama was used for scoring the biographies. For example in the GPT/Llama CO run, all 261 biographies removed at the cutoff score were accountant biographies. Ties were resolved using the original synthetic pool order, which was ordered alphabetically by profession.
 
+Because the scores were concentrated around a few values, the synthetic data pool order became important. Up to 48.9\% of removals were selected from ties at the cutoff score. Because the synthetic data pools were ordered alphabetically by profession, biographies from professions early in the alphabet were removed first when scores were tied.
+The filtering changed both the profession distribution as well as the share of women in most of these professions. The models gave higher bias scores to biographies of certain professions which consistently decreased in proportion, and gave consistently lower scores to biographies of other professions. Also, female biographies were consistently given higher bias scores on average, leading to more removals. Therefore, the filtering step did not preserve the profession and gender distributions in the synthetic data pools.
 \subsection{Downstream Classification Performance and Gender Bias}
 \label{sec:downstream-results}
 
