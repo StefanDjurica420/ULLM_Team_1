@@ -1,0 +1,150 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{10}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter does
+%%% not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+\makeatletter
+\@ifundefined{NAT@parse@date}{}{\let\NAT@parse@date@orig\NAT@parse@date}
+\@ifundefined{NAT@parse@date}{}{\def\NAT@parse@date#1#2#3#4#5#6@@{\NAT@parse@date@orig#1#2#3#4#5#6@@\def\NAT@tempyear{0000}\def\NAT@tempexlab{{?}}\ifx\NAT@year\NAT@tempyear\ifx\NAT@exlab\NAT@tempexlab\def\NAT@date{[n.\,d.]}\else\edef\NAT@date{[n.\,d.]\NAT@exlab}\fi\fi}}
+\makeatother
+
+\bibitem[Brown et~al\mbox{.}(2020)]%
+        {brown2020language}
+\bibfield{author}{\bibinfo{person}{Tom~B. Brown} {et~al\mbox{.}}} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Language Models are Few-Shot Learners}. In \bibinfo{booktitle}{\emph{Advances in Neural Information Processing Systems}}, Vol.~\bibinfo{volume}{33}. \bibinfo{publisher}{Curran Associates, Inc.}, \bibinfo{address}{Red Hook, NY, USA}, \bibinfo{pages}{1877--1901}.
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2005.14165}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chen et~al\mbox{.}(2024)]%
+        {chen2024alpagasus}
+\bibfield{author}{\bibinfo{person}{Lichang Chen} {et~al\mbox{.}}} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{AlpaGasus}: Training a Better {Alpaca} with Fewer Data}. In \bibinfo{booktitle}{\emph{International Conference on Learning Representations}}. \bibinfo{publisher}{OpenReview.net}, \bibinfo{address}{Vienna, Austria}.
+\newblock
+\urldef\tempurl%
+\url{https://openreview.net/forum?id=FdVXgSJhvz}
+\showURL{%
+\tempurl}
+
+
+\bibitem[De-Arteaga et~al\mbox{.}(2019)]%
+        {dearteaga2019bios}
+\bibfield{author}{\bibinfo{person}{Maria De-Arteaga} {et~al\mbox{.}}} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Bias in Bios: A Case Study of Semantic Representation Bias in a High-Stakes Setting}. In \bibinfo{booktitle}{\emph{Proceedings of the Conference on Fairness, Accountability, and Transparency}}. \bibinfo{publisher}{Association for Computing Machinery}, \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{120--128}.
+\newblock
+\href{https://doi.org/10.1145/3287560.3287572}{doi:\nolinkurl{10.1145/3287560.3287572}}
+
+
+\bibitem[Hardt et~al\mbox{.}(2016)]%
+        {hardt2016equality}
+\bibfield{author}{\bibinfo{person}{Moritz Hardt}, \bibinfo{person}{Eric Price}, {and} \bibinfo{person}{Nathan Srebro}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Equality of Opportunity in Supervised Learning}. In \bibinfo{booktitle}{\emph{Advances in Neural Information Processing Systems}}, Vol.~\bibinfo{volume}{29}. \bibinfo{publisher}{Curran Associates, Inc.}, \bibinfo{address}{Red Hook, NY, USA}, \bibinfo{pages}{3315--3323}.
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/1610.02413}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Hu et~al\mbox{.}(2022)]%
+        {hu2022lora}
+\bibfield{author}{\bibinfo{person}{Edward~J. Hu} {et~al\mbox{.}}} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{{LoRA}: Low-Rank Adaptation of Large Language Models}. In \bibinfo{booktitle}{\emph{International Conference on Learning Representations}}. \bibinfo{publisher}{OpenReview.net}, \bibinfo{address}{Online}.
+\newblock
+\urldef\tempurl%
+\url{https://openreview.net/forum?id=nZeVKeeFYf9}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Li et~al\mbox{.}(2026)]%
+        {li2026inheritance}
+\bibfield{author}{\bibinfo{person}{Miaomiao Li} {et~al\mbox{.}}} \bibinfo{year}{2026}\natexlab{}.
+\newblock \bibinfo{title}{Understanding and Mitigating Bias Inheritance in {LLM}-based Data Augmentation on Downstream Tasks}.
+\newblock
+\showeprint[arxiv]{2502.04419}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2502.04419v3}
+\showURL{%
+\tempurl}
+\newblock
+\shownote{Version 3}.
+
+
+\bibitem[{Llama Team, AI @ Meta}(2024)]%
+        {grattafiori2024llama}
+\bibfield{author}{\bibinfo{person}{{Llama Team, AI @ Meta}}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{The {Llama} 3 Herd of Models}.
+\newblock
+\showeprint[arxiv]{2407.21783}
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2407.21783v3}
+\showURL{%
+\tempurl}
+\newblock
+\shownote{Version 3}.
+
+
+\bibitem[Ravfogel et~al\mbox{.}(2020)]%
+        {ravfogel2020null}
+\bibfield{author}{\bibinfo{person}{Shauli Ravfogel} {et~al\mbox{.}}} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Null It Out: Guarding Protected Attributes by Iterative Nullspace Projection}. In \bibinfo{booktitle}{\emph{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics}}. \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Online}, \bibinfo{pages}{7237--7256}.
+\newblock
+\href{https://doi.org/10.18653/v1/2020.acl-main.647}{doi:\nolinkurl{10.18653/v1/2020.acl-main.647}}
+
+
+\bibitem[Romanov et~al\mbox{.}(2019)]%
+        {romanov2019name}
+\bibfield{author}{\bibinfo{person}{Alexey Romanov} {et~al\mbox{.}}} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{What's in a Name? {R}educing Bias in Bios without Access to Protected Attributes}. In \bibinfo{booktitle}{\emph{Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)}}. \bibinfo{publisher}{Association for Computational Linguistics}, \bibinfo{address}{Minneapolis, Minnesota}, \bibinfo{pages}{4187--4195}.
+\newblock
+\href{https://doi.org/10.18653/v1/N19-1424}{doi:\nolinkurl{10.18653/v1/N19-1424}}
+
+
+\bibitem[Turpin et~al\mbox{.}(2023)]%
+        {turpin2023unfaithful}
+\bibfield{author}{\bibinfo{person}{Miles Turpin} {et~al\mbox{.}}} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Language Models Don't Always Say What They Think: Unfaithful Explanations in Chain-of-Thought Prompting}. In \bibinfo{booktitle}{\emph{Advances in Neural Information Processing Systems}}, Vol.~\bibinfo{volume}{36}. \bibinfo{publisher}{Curran Associates, Inc.}, \bibinfo{address}{Red Hook, NY, USA}.
+\newblock
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2305.04388}
+\showURL{%
+\tempurl}
+
+
+\end{thebibliography}

@@ -1,7 +1,15 @@
 # Fdb version 4
-["pdflatex"] 1792755069.59113 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792755073.56571 0
+["bibtex main"] 1792763381.35931 "main.aux" "main.bbl" "main" 1792763381.94459 0
+  "./references.bib" 1792760753 4460 78f6fcfd0a65b97a6acc8df7f4ee92c0 ""
+  "c:/texlive/2026/texmf-dist/bibtex/bst/acmart/ACM-Reference-Format.bst" 1792154025 94292 6c9c536013d461258ea4a4813fe90aa8 ""
+  "main.aux" 1792760799 11664 218ccd45aae2b1a3781155b73b49ef05 "pdflatex"
+  (generated)
+  "main.bbl"
+  "main.blg"
+  (rewritten before read)
+["pdflatex"] 1792760794.34297 "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" "main.pdf" "main" 1792763381.94488 0
   "c:/Users/Stefan" 1762904539 12700 13a2374d6486bd45860f3dfcd2a1bab4 ""
-  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792755064 60360 efb3f0e31618b877b976d9e4e52d6450 ""
+  "c:/Users/Stefan Djurica/Desktop/ULLM_Team_1/paper/main.tex" 1792763380 56739 537925a4db2bb9b430a53cc889088b9c ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc" 1792154935 7693 0f2dce6d313c82989ec3a67fc24df2a0 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc" 1792155097 2921 8ca0eb0831f9bc5da080d3697cfe67bf ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc" 1792155097 2933 9ad527ce78d7c5fa0a642dead095f172 ""
@@ -185,7 +193,6 @@
   "c:/texlive/2026/texmf-dist/tex/latex/newtx/untxsym.fd" 1792155383 568 9df6be53c1b3ec79740d714ff4ae0937 ""
   "c:/texlive/2026/texmf-dist/tex/latex/oberdiek/centernot.sty" 1792155428 1640 c9cca60f81c5839b9a3e794d72c0b0a7 ""
   "c:/texlive/2026/texmf-dist/tex/latex/oberdiek/ifdraft.sty" 1792155428 1922 5bdcc31b0573e5e7f31c36f1b88b6a7d ""
-  "c:/texlive/2026/texmf-dist/tex/latex/placeins/placeins.sty" 1792155561 4087 636308456f60d2b31cbf97867db5708d ""
   "c:/texlive/2026/texmf-dist/tex/latex/preprint/balance.sty" 1792155592 3366 d938ad2440edc1ea1c9042843580ec42 ""
   "c:/texlive/2026/texmf-dist/tex/latex/psnfss/pifont.sty" 1792155618 2283 62e73848f29fd8cd37fb7974c7cf2221 ""
   "c:/texlive/2026/texmf-dist/tex/latex/psnfss/upsy.fd" 1792155618 148 2da0acd77cba348f34823f44cabf0058 ""
@@ -202,16 +209,17 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1792156453 5678096 2c823c228609a3b902dd142302655070 ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1792156523 3668391 e899e91ade3399a756ba67454c2282d1 ""
   "c:/texlive/2026/texmf.cnf" 1792156436 713 e69b156964470283e0530f5060668171 ""
-  "comment.cut" 1792755072 138 40f407066d61aa690f6c2085b72d221b "pdflatex"
+  "comment.cut" 1792760798 138 40f407066d61aa690f6c2085b72d221b "pdflatex"
   "figures/downstream_tpr_gaps.png" 1792675547 180830 12f6ecbb911e7983c11d978895ca3d49 ""
   "figures/filtering_distribution_heatmaps.png" 1792746113 402277 30541cab653299697346b130f2207f33 ""
   "figures/filtering_removal_composition.png" 1792670481 227453 1e2e8fd8913748e50affce495afec1ab ""
   "figures/filtering_score_distributions.png" 1792670481 316392 4da3e010de1636a0fc96780863a8fde6 ""
   "generated/downstream_all.tex" 1792675547 1315 1d5d8dbd31b56220384ebd987689d107 ""
   "generated/explanation_pairs.tex" 1792748023 778 61f75d97178b8d256776a7d710d2af76 ""
-  "main.aux" 1792755073 11411 06419f7a4badf0311dce1a026f57e9ca "pdflatex"
-  "main.out" 1792755073 3160 a6d598e23a99e4e751efdff2c0de16b8 "pdflatex"
-  "main.tex" 1792755064 60360 efb3f0e31618b877b976d9e4e52d6450 ""
+  "main.aux" 1792760799 11664 218ccd45aae2b1a3781155b73b49ef05 "pdflatex"
+  "main.bbl" 1792763381 7588 18f8c3f87bf469569860fd302e596f47 "bibtex main"
+  "main.out" 1792760799 3160 a6d598e23a99e4e751efdff2c0de16b8 "pdflatex"
+  "main.tex" 1792763380 56739 537925a4db2bb9b430a53cc889088b9c ""
   (generated)
   "comment.cut"
   "main.aux"

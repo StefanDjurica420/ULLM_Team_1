@@ -1,0 +1,29 @@
+# Both generators on the mock backend: tests the whole pipeline without API keys or downloads.
+#   python -m gen.prepare_refs --config configs/mock.yaml --source fake --n-per-profession 40
+run_name: mock
+seed: 42
+output_dir: data/runs/mock
+refs_file: data/refs_mock.jsonl
+professions: [surgeon, nurse, software_engineer]
+genders: [male, female]
+prompt: {type: 1, template: prompts/gen_type1_v1.txt, version: v1, n_refs: 3, min_words: 70, max_words: 130}
+counts: {per_profession: 40, gender_ratio: refs, overgen: 1.2}
+sampling: {temperature: 0.9, top_p: 0.95, max_tokens: 500}
+generators:
+  llama:
+    backend: mock
+    provider: mock
+    model: mock-llama
+    concurrency: 8
+  gpt4omini:
+    backend: mock
+    provider: mock
+    model: mock-gpt4omini
+    concurrency: 8
+validate:
+  min_words: 50
+  max_words: 180
+  min_explanation_words: 8
+  shingle_n: 8
+  max_shingle_overlap: 0.3
+  opening_share_warn: 0.05

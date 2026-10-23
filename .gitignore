@@ -40,3 +40,8 @@ _old_build/
 paper/PearReviewULLMTeams_1.aux
 paper/PearReviewULLMTeams_1.log
 paper/PearReviewULLMTeams_1.synctex.gz
+# Filtering experiments
+filtering_outputs/
+# Pipeline outputs and secrets
+data/
+.pytest_cache/
