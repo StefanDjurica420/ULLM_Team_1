@@ -457,6 +457,11 @@ The filtering results also put this effect in perspective. Content-only filterin
 
 Overall, augmenting the original data with synthetic biographies that keep its occupation and gender composition reduced gender differences in true positive rates without notably lowering classification performance, even though the generation prompt deliberately elicited gendered choices. Removing the biographies that an LLM rated as most biased did not improve on this, and adding the generator's explanations made such filtering more effective only in some configurations, mainly with GPT-4o-mini as the filter. Whether explanations improve synthetic data filtering for gender bias mitigation therefore depends on the models involved, and in our setting keeping all synthetic biographies was more effective than removing those rated as most biased.
 
+\section{Limitations}
+\label{sec:limitations}
+
+Our study uses one dataset, two generator/filter models, and one training seed per configuration, which limits generalization and does not establish statistical significance. Small occupation--gender groups make some TPR gaps sensitive to individual predictions. Pool-order tie-breaking and changes in group composition may affect filtering outcomes. Comparisons with full pools also confound data selection with training-set size. Finally, generator explanations are not verified accounts of the models' reasoning.
+
 \begin{acks}
 We thank Eindhoven University of Technology (TU/e) for the compute budget on Snellius, the Dutch national supercomputer operated by SURF.
 \end{acks}
