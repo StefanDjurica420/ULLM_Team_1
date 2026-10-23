@@ -215,8 +215,6 @@ INPUT c:/texlive/2026/texmf-dist/tex/latex/libertine/T1LinuxLibertineT-TLF.fd
 INPUT c:/texlive/2026/texmf-dist/tex/latex/libertine/T1LinuxLibertineT-TLF.fd
 INPUT c:/texlive/2026/texmf-dist/tex/latex/libertine/T1LinuxLibertineT-TLF.fd
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1.tfm
-INPUT c:/texlive/2026/texmf-dist/tex/latex/placeins/placeins.sty
-INPUT c:/texlive/2026/texmf-dist/tex/latex/placeins/placeins.sty
 INPUT c:/texlive/2026/texmf-dist/tex/latex/preprint/balance.sty
 INPUT c:/texlive/2026/texmf-dist/tex/latex/preprint/balance.sty
 INPUT c:/texlive/2026/texmf-dist/tex/latex/l3kernel/l3backend-pdftex.def
@@ -317,6 +315,8 @@ INPUT c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_76gpa5.enc
+INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineTB-tlf-t1.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_nh77jq.enc
@@ -325,6 +325,8 @@ INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineTI-tlf-t1.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc
+INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-ot1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-ot1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/nxlmi.tfm
@@ -361,12 +363,6 @@ INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
-INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineT-tlf-t1.vf
-INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1--base.tfm
-INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
-INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
-INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
-INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/inconsolata/t1-zi4r-4.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/newtx/nxlmi.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/LibertineMathMI.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/NewTXMI.tfm
@@ -387,6 +383,10 @@ INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txmiaX.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/newtx/ntxsy.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txsys.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txex-bar.tfm
+INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+INPUT c:/texlive/2026/texmf-dist/tex/latex/inconsolata/t1zi4.fd
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/inconsolata/t1-zi4r-4.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/newtx/ntxexx.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txexs.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/newtx/ntxsy7.vf
@@ -397,11 +397,11 @@ INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/newtx/nxlmia.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/LibertineMathRM.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txmiaSTbb.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/txmiaX.tfm
-INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineTB-tlf-t1.vf
-INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-t1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/inconsolata/t1-zi4r-4.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1.tfm
+INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineTB-tlf-t1.vf
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTB-tlf-t1--base.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-ot1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineT-tlf-ot1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/newtx/nxlmi7.tfm
@@ -476,6 +476,9 @@ OUTPUT comment.cut
 INPUT ./comment.cut
 INPUT ./comment.cut
 INPUT comment.cut
+INPUT ./main.bbl
+INPUT ./main.bbl
+INPUT main.bbl
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/public/libertine/LinLibertineTI-tlf-t1.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/public/libertine/LinLibertineTI-tlf-t1--base.tfm
