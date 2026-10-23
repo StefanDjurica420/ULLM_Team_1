@@ -13,35 +13,87 @@
 \citation{dearteaga2019bios}
 \citation{chen2024alpagasus}
 \citation{brown2020language}
+\citation{dearteaga2019bios}
 \citation{li2026inheritance}
+\citation{li2026inheritance}
+\citation{grattafiori2024llama}
+\citation{hu2022lora}
+\citation{li2026inheritance}
+\citation{hu2022lora}
+\citation{li2026inheritance}
+\citation{dearteaga2019bios}
+\citation{dearteaga2019bios}
+\citation{hardt2016equality}
+\citation{romanov2019name}
+\citation{ravfogel2020null}
+\citation{romanov2019name}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Theoretical Background}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{2}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dataset Sampling}{2}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:background}{{2}{2}{Theoretical Background}{section.2}{}}
+\citation{ravfogel2020null}
+\citation{li2026inheritance}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Dataset Sampling}{3}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Synthetic Data Generation}{3}{subsection.3.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Synthetic data generation per generator model.}}{3}{table.caption.3}\protected@file@percent }
+\citation{grattafiori2024llama}
+\citation{li2026inheritance}
+\citation{hu2022lora}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Synthetic data generation per generator model.}}{4}{table.caption.3}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:generation}{{1}{3}{Synthetic data generation per generator model}{table.caption.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Synthetic Data Filtering}{3}{subsection.3.3}\protected@file@percent }
-\newlabel{sec:filtering}{{3.3}{3}{Synthetic Data Filtering}{subsection.3.3}{}}
+\newlabel{tab:generation}{{1}{4}{Synthetic data generation per generator model}{table.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Synthetic Data Filtering}{4}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:filtering}{{3.3}{4}{Synthetic Data Filtering}{subsection.3.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Model Training}{4}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Evaluation}{4}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{4}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Filtering Analysis}{4}{subsection.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Gender bias score distributions across all filtering configurations.}}{4}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:filtering-scores}{{1}{4}{Gender bias score distributions across all filtering configurations}{figure.caption.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Composition of the 2,000 biography removals across all filtering configurations.}}{4}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:filtering-removals}{{2}{4}{Composition of the 2,000 biography removals across all filtering configurations}{figure.caption.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Downstream Classification Performance and Gender Bias}{4}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:downstream-results}{{4.2}{4}{Downstream Classification Performance and Gender Bias}{subsection.4.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points.}}{5}{table.caption.6}\protected@file@percent }
-\newlabel{tab:downstream-all}{{2}{5}{Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points}{table.caption.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{5}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:downstream-tpr-gaps}{{3}{5}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.7}{}}
+\newlabel{sec:training}{{3.4}{4}{Model Training}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Classifier.}{4}{section*.4}\protected@file@percent }
+\citation{li2026inheritance}
+\citation{li2026inheritance}
+\@writefile{toc}{\contentsline {paragraph}{Training procedure.}{5}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Settings.}{5}{section*.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Fine-tuning settings, identical for all training conditions.}}{5}{table.caption.7}\protected@file@percent }
+\newlabel{tab:training}{{2}{5}{Fine-tuning settings, identical for all training conditions}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {paragraph}{Learning-rate selection.}{5}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training runs.}{5}{section*.9}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once.}}{5}{table.caption.10}\protected@file@percent }
+\newlabel{tab:conditions}{{3}{5}{Training conditions. Every condition contains the 12,000 original training biographies. Identical training sets were trained only once}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{5}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Evaluation}{5}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:evaluation}{{3.5}{5}{Evaluation}{subsection.3.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Test set.}{5}{section*.12}\protected@file@percent }
+\citation{li2026inheritance}
+\@writefile{toc}{\contentsline {paragraph}{Answer extraction.}{6}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Metrics.}{6}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results}{6}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Filtering Analysis}{6}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Gender bias score distributions across all filtering configurations.}}{6}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:filtering-scores}{{1}{6}{Gender bias score distributions across all filtering configurations}{figure.caption.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Composition of the 2,000 biography removals across all filtering configurations.}}{6}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:filtering-removals}{{2}{6}{Composition of the 2,000 biography removals across all filtering configurations}{figure.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Downstream Classification Performance and Gender Bias}{6}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:downstream-results}{{4.2}{6}{Downstream Classification Performance and Gender Bias}{subsection.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points.}}{7}{table.caption.17}\protected@file@percent }
+\newlabel{tab:downstream-all}{{4}{7}{Classification performance and gender TPR gaps. Accuracy and macro F1 are percentages; gaps are in percentage points}{table.caption.17}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples.}}{7}{figure.caption.18}\protected@file@percent }
+\newlabel{fig:downstream-tpr-gaps}{{3}{7}{TPR gender gaps by occupation, in percentage points (female minus male). G/L labels identify the generator followed by the filter; CO and EA denote content-only and explanation-aware filtering. Counts in parentheses are female/male test examples}{figure.caption.18}{}}
 \bibcite{brown2020language}{{1}{}{{}}{{}}}
 \bibcite{chen2024alpagasus}{{2}{}{{}}{{}}}
 \bibcite{dearteaga2019bios}{{3}{}{{}}{{}}}
-\bibcite{li2026inheritance}{{4}{}{{}}{{}}}
-\bibcite{turpin2023unfaithful}{{5}{}{{}}{{}}}
+\bibcite{grattafiori2024llama}{{4}{}{{}}{{}}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{8}{table.caption.19}\protected@file@percent }
+\newlabel{tab:explanation-pairs}{{5}{8}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{8}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:occupation-results}{{4.3}{8}{Occupation-Level Analysis}{subsection.4.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}}{8}{table.caption.20}\protected@file@percent }
+\newlabel{tab:occupation-changes}{{6}{8}{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations}{table.caption.20}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{8}{table.caption.21}\protected@file@percent }
+\newlabel{tab:occupation-examples}{{7}{8}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {section}{Acknowledgments}{8}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{8}{section*.25}\protected@file@percent }
+\bibcite{hardt2016equality}{{5}{}{{}}{{}}}
+\bibcite{hu2022lora}{{6}{}{{}}{{}}}
+\bibcite{li2026inheritance}{{7}{}{{}}{{}}}
+\bibcite{ravfogel2020null}{{8}{}{{}}{{}}}
+\bibcite{romanov2019name}{{9}{}{{}}{{}}}
+\bibcite{turpin2023unfaithful}{{10}{}{{}}{{}}}
 \newlabel{tocindent-1}{0pt}
 \newlabel{tocindent0}{0pt}
 \newlabel{tocindent1}{4.185pt}
@@ -50,14 +102,5 @@
 \newlabel{tocindent4}{0pt}
 \newlabel{tocindent5}{0pt}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points.}}{6}{table.caption.8}\protected@file@percent }
-\newlabel{tab:explanation-pairs}{{3}{6}{Effect of generator explanations on macro F1 and RMS TPR gaps. CO: content only; EA: explanation aware. Differences ($\Delta $) are EA minus CO, in percentage points}{table.caption.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Occupation-Level Analysis}{6}{subsection.4.3}\protected@file@percent }
-\newlabel{sec:occupation-results}{{4.3}{6}{Occupation-Level Analysis}{subsection.4.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations.}}{6}{table.caption.9}\protected@file@percent }
-\newlabel{tab:occupation-changes}{{4}{6}{Number of occupations with smaller, larger, or unchanged absolute TPR gaps after adding explanations}{table.caption.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware.}}{6}{table.caption.10}\protected@file@percent }
-\newlabel{tab:occupation-examples}{{5}{6}{Group-specific TPRs (\%) for selected comparisons. Configuration lists generator/filter; F and M denote female and male groups. CO: content-only; EA: explanation-aware}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {section}{References}{6}{section*.12}\protected@file@percent }
-\newlabel{TotPages}{{6}{6}{}{page.6}{}}
-\gdef \@abspage@last{6}
+\newlabel{TotPages}{{9}{9}{}{page.9}{}}
+\gdef \@abspage@last{9}
